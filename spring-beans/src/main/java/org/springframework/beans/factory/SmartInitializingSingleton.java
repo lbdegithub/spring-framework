@@ -17,6 +17,17 @@
 package org.springframework.beans.factory;
 
 /**
+ *
+ * BeanFactory引导过程中，在单例预实例化阶段结束时触发了回调接口。此接口可以由单例bean实现，
+ * 以便在常规的单例实例化算法之后执行一些初始化，避免意外的早期初始化
+ * （例如，来自ListableBeanFactory.getBeansOfType调用）的副作用。从这个意义上讲，
+ * 它是InitializingBean的替代方法，后者在Bean的本地构造阶段结束时立即触发。
+ * 这个回调变体有点类似于org.springframework.context.event.ContextRefreshedEvent，
+ * 但是不需要org.springframework.context.ApplicationListener的实现，
+ * 不需要过滤整个上下文层次结构中的上下文引用。对bean包的依赖性最小，
+ * 并且由独立的ListableBeanFactory实现兑现，而不仅仅是在org.springframework.context.ApplicationContext环境中。
+ * 注意：如果要启动/管理异步任务，最好实现org.springframework.context.Lifecycle，它为运行时管理提供了更丰富的模型，并允许分阶段启动/关闭
+ *
  * Callback interface triggered at the end of the singleton pre-instantiation phase
  * during {@link BeanFactory} bootstrap. This interface can be implemented by
  * singleton beans in order to perform some initialization after the regular

@@ -32,6 +32,9 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 
 /**
+ *
+ * 构造函数参数值的持有者，通常作为bean定义的一部分。
+ * 支持构造函数参数列表中特定索引的值以及按类型的通用参数匹配
  * Holder for constructor argument values, typically as part of a bean definition.
  *
  * <p>Supports values for a specific index in the constructor argument list
@@ -113,6 +116,7 @@ public class ConstructorArgumentValues {
 	}
 
 	/**
+	 * 在构造函数参数列表中为给定索引添加一个参数值，如果需要，将新值（通常是一个集合）与当前值合并：请参见Mergeable。？？
 	 * Add an argument value for the given index in the constructor argument list,
 	 * merging the new value (typically a collection) with the current value
 	 * if demanded: see {@link org.springframework.beans.Mergeable}.
@@ -174,6 +178,8 @@ public class ConstructorArgumentValues {
 	}
 
 	/**
+	 *
+	 * 返回索引参数值的映射
 	 * Return the map of indexed argument values.
 	 * @return unmodifiable Map with Integer index as key and ValueHolder as value
 	 * @see ValueHolder
@@ -301,6 +307,7 @@ public class ConstructorArgumentValues {
 
 	/**
 	 * Return the list of generic argument values.
+	 * 返回通用参数值列表
 	 * @return unmodifiable List of ValueHolders
 	 * @see ValueHolder
 	 */
@@ -542,6 +549,7 @@ public class ConstructorArgumentValues {
 		}
 
 		/**
+		 * 返回此holder是否已经包含转换后的值（true），或者该值是否仍需要转换（false）
 		 * Return whether this holder contains a converted value already ({@code true}),
 		 * or whether the value still needs to be converted ({@code false}).
 		 */

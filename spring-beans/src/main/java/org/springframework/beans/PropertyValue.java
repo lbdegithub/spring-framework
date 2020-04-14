@@ -23,6 +23,10 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 /**
+ * <p>
+ *     持有单个bean属性的信息和值的对象。在这里使用对象，而不只是将所有属性存储在以属性名称为键的映射中，它可以提供更大的灵活性，并能够以优化的方式处理索引属性等。
+ * 请注意，该值不必是最终所需的类型：BeanWrapper实现应处理任何必要的转换，因为此对象对将应用于的对象一无所知。
+ * </p>
  * Object to hold information and value for an individual bean property.
  * Using an object here, rather than just storing all properties in
  * a map keyed by property name, allows for more flexibility, and the

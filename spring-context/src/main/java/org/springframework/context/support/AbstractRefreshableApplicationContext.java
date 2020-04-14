@@ -64,9 +64,16 @@ import org.springframework.lang.Nullable;
  */
 public abstract class AbstractRefreshableApplicationContext extends AbstractApplicationContext {
 
+	/**
+	 * 当注册一个具有相同名称不同定义的bean，用来设置是否应允许它覆盖bean定义，自动替换前者。
+	 * 默认值为“ true” ，false时 相同的将引发异常。
+	 */
 	@Nullable
 	private Boolean allowBeanDefinitionOverriding;
 
+	/**
+	 * 是否自动尝试解析Bean之间的循环引用
+	 */
 	@Nullable
 	private Boolean allowCircularReferences;
 
@@ -127,9 +134,13 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 			closeBeanFactory();
 		}
 		try {
+			// 为上下文创建一个内部bean工厂
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
+			// 设置序列化ID  此应用程序上下文的唯一ID
 			beanFactory.setSerializationId(getId());
+			// 定制一些配置：同名的bean是否需要覆盖；是否准许循环依赖，解析。
 			customizeBeanFactory(beanFactory);
+			// 通过委托给一个或多个bean定义读取器，将bean定义加载到给定的bean工厂中<加载>
 			loadBeanDefinitions(beanFactory);
 			synchronized (this.beanFactoryMonitor) {
 				this.beanFactory = beanFactory;
@@ -202,8 +213,10 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * @see org.springframework.beans.factory.support.DefaultListableBeanFactory#setAllowEagerClassLoading
 	 * @see org.springframework.beans.factory.support.DefaultListableBeanFactory#setAllowCircularReferences
 	 * @see org.springframework.beans.factory.support.DefaultListableBeanFactory#setAllowRawInjectionDespiteWrapping
+	 *
 	 */
 	protected DefaultListableBeanFactory createBeanFactory() {
+		// 为此上下文创建一个内部bean工厂
 		return new DefaultListableBeanFactory(getInternalParentBeanFactory());
 	}
 
@@ -238,6 +251,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * @throws IOException if loading of bean definition files failed
 	 * @see org.springframework.beans.factory.support.PropertiesBeanDefinitionReader
 	 * @see org.springframework.beans.factory.xml.XmlBeanDefinitionReader
+	 * 通过委托给一个或多个bean定义读取器，将bean定义加载到给定的bean工厂中
 	 */
 	protected abstract void loadBeanDefinitions(DefaultListableBeanFactory beanFactory)
 			throws BeansException, IOException;

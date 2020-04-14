@@ -131,10 +131,14 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, Single
 	boolean isCacheBeanMetadata();
 
 	/**
-	 * Specify the resolution strategy for expressions in bean definition values.
+	 Specify the resolution strategy for expressions in bean definition values.
 	 * <p>There is no expression support active in a BeanFactory by default.
 	 * An ApplicationContext will typically set a standard expression strategy
 	 * here, supporting "#{...}" expressions in a Unified EL compatible style.
+	 *为bean定义值中的表达式指定解析策略。
+	* <p>默认情况下，BeanFactory中不支持任何表达式支持。
+	* ApplicationContext通常会设置标准的表达策略
+	*在这里，以Unified EL兼容样式支持“＃{...}”表达式。
 	 * @since 3.0
 	 */
 	void setBeanExpressionResolver(@Nullable BeanExpressionResolver resolver);
@@ -166,6 +170,11 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, Single
 	 * on the given registry, fresh for each bean creation attempt. This avoids
 	 * the need for synchronization on custom editors; hence, it is generally
 	 * preferable to use this method instead of {@link #registerCustomEditor}.
+	 *添加一个PropertyEditorRegistrar应用于所有bean创建过程。
+	* <p>这样的注册商可以创建新的PropertyEditor实例并进行注册
+	*在给定的注册表中，对于每次创建bean的尝试都是新鲜的。这样可以避免
+	*需要在自定义编辑器上进行同步；因此，通常
+	*最好使用此方法代替{@link #registerCustomEditor}。
 	 * @param registrar the PropertyEditorRegistrar to register
 	 */
 	void addPropertyEditorRegistrar(PropertyEditorRegistrar registrar);
@@ -234,18 +243,27 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, Single
 
 	/**
 	 * Add a new BeanPostProcessor that will get applied to beans created
-	 * by this factory. To be invoked during factory configuration.
-	 * <p>Note: Post-processors submitted here will be applied in the order of
-	 * registration; any ordering semantics expressed through implementing the
-	 * {@link org.springframework.core.Ordered} interface will be ignored. Note
-	 * that autodetected post-processors (e.g. as beans in an ApplicationContext)
-	 * will always be applied after programmatically registered ones.
+	 * 	 * by this factory. To be invoked during factory configuration.
+	 * 	 * <p>Note: Post-processors submitted here will be applied in the order of
+	 * 	 * registration; any ordering semantics expressed through implementing the
+	 * 	 * {@link org.springframework.core.Ordered} interface will be ignored. Note
+	 * 	 * that autodetected post-processors (e.g. as beans in an ApplicationContext)
+	 * 	 * will always be applied after programmatically registered ones.
+	 *  添加一个新的BeanPostProcessor，它将应用于创建的bean
+		*由这家工厂提供。在出厂配置期间调用。
+		* <p>注意：此处提交的后处理器将按以下顺序应用
+		*注册；通过实现
+		* {@link org.springframework.core.Ordered}接口将被忽略。
+
+		*注意自动检测到的后处理器（例如，作为ApplicationContext中的bean）
+		*将始终以编程方式注册后使用。
 	 * @param beanPostProcessor the post-processor to register
 	 */
 	void addBeanPostProcessor(BeanPostProcessor beanPostProcessor);
 
 	/**
 	 * Return the current number of registered BeanPostProcessors, if any.
+	 * 返回当前已注册BeanPostProcessor的数量
 	 */
 	int getBeanPostProcessorCount();
 
@@ -327,6 +345,7 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, Single
 	BeanDefinition getMergedBeanDefinition(String beanName) throws NoSuchBeanDefinitionException;
 
 	/**
+	 * 确定具有给定名称的Bean是否为FactoryBean。
 	 * Determine whether the bean with the given name is a FactoryBean.
 	 * @param name the name of the bean to check
 	 * @return whether the bean is a FactoryBean

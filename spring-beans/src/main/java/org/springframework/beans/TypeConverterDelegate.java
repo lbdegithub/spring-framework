@@ -99,6 +99,7 @@ class TypeConverterDelegate {
 	}
 
 	/**
+	 * LB-TODO 类型转化处理-look
 	 * Convert the value to the required type (if necessary from a String),
 	 * for the specified property.
 	 * @param propertyName name of the property

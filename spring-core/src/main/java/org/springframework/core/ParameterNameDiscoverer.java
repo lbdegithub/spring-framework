@@ -48,6 +48,9 @@ public interface ParameterNameDiscoverer {
 	String[] getParameterNames(Method method);
 
 	/**
+	 * <p><h3>返回构造函数的参数名称<h3/>
+	 * 如果无法确定，则返回null。
+	 * 如果参数名称仅可用于给定构造函数的某些参数，而不适用于其他参数，则数组中的各个条目可能为null。但是，建议在可行的地方改用存根参数名称
 	 * Return parameter names for a constructor, or {@code null} if they cannot be determined.
 	 * <p>Individual entries in the array may be {@code null} if parameter names are only
 	 * available for some parameters of the given constructor but not for others. However,

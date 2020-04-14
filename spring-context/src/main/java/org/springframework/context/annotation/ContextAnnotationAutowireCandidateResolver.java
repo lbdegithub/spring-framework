@@ -36,6 +36,10 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 /**
+ *
+ * <p> LB-TODO  (Lazy)
+ *     提供对限定符注释以及context.annotation包中由Lazy注释驱动的延迟解析的支持。
+ * </p>
  * Complete implementation of the
  * {@link org.springframework.beans.factory.support.AutowireCandidateResolver} strategy
  * interface, providing support for qualifier annotations as well as for lazy resolution
@@ -53,12 +57,14 @@ public class ContextAnnotationAutowireCandidateResolver extends QualifierAnnotat
 	}
 
 	protected boolean isLazy(DependencyDescriptor descriptor) {
+		// 是否@Lazy
 		for (Annotation ann : descriptor.getAnnotations()) {
 			Lazy lazy = AnnotationUtils.getAnnotation(ann, Lazy.class);
 			if (lazy != null && lazy.value()) {
 				return true;
 			}
 		}
+		// 方法的参数上是否有@Lazy
 		MethodParameter methodParam = descriptor.getMethodParameter();
 		if (methodParam != null) {
 			Method method = methodParam.getMethod();
@@ -72,6 +78,12 @@ public class ContextAnnotationAutowireCandidateResolver extends QualifierAnnotat
 		return false;
 	}
 
+	/**
+	 * 注入惰性解析代理 LB-TODO @Lazy
+	 * @param descriptor 当前依赖字段的信息（包装类）
+	 * @param beanName 当前解析的bean，
+	 * @return 代理类
+	 */
 	protected Object buildLazyResolutionProxy(final DependencyDescriptor descriptor, final @Nullable String beanName) {
 		Assert.state(getBeanFactory() instanceof DefaultListableBeanFactory,
 				"BeanFactory needs to be a DefaultListableBeanFactory");
@@ -87,6 +99,7 @@ public class ContextAnnotationAutowireCandidateResolver extends QualifierAnnotat
 			}
 			@Override
 			public Object getTarget() {
+				//  获取目标类 就是依赖对象的实例 ---为代理准备
 				Object target = beanFactory.doResolveDependency(descriptor, beanName, null, null);
 				if (target == null) {
 					Class<?> type = getTargetClass();
@@ -114,6 +127,7 @@ public class ContextAnnotationAutowireCandidateResolver extends QualifierAnnotat
 		if (dependencyType.isInterface()) {
 			pf.addInterface(dependencyType);
 		}
+		// 返回代理对象
 		return pf.getProxy(beanFactory.getBeanClassLoader());
 	}
 

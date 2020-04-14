@@ -42,6 +42,9 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
 
 /**
+ * <p>
+ *     即将注入的特定依赖项的描述符。包装构造函数参数，方法参数或字段，以允许对其元数据的统一访问
+ * </p>
  * Descriptor for a specific dependency that is about to be injected.
  * Wraps a constructor parameter, a method parameter or a field,
  * allowing unified access to their metadata.
@@ -113,6 +116,7 @@ public class DependencyDescriptor extends InjectionPoint implements Serializable
 	}
 
 	/**
+	 * 为一个字段创建一个新的描述符。
 	 * Create a new descriptor for a field.
 	 * Considers the dependency as 'eager'.
 	 * @param field the field to wrap
@@ -278,6 +282,7 @@ public class DependencyDescriptor extends InjectionPoint implements Serializable
 
 
 	/**
+	 * 增加此描述符的嵌套级别
 	 * Increase this descriptor's nesting level.
 	 */
 	public void increaseNestingLevel() {
@@ -289,6 +294,7 @@ public class DependencyDescriptor extends InjectionPoint implements Serializable
 	}
 
 	/**
+	 * （可选）设置包含此依赖项的具体类。这可能不同于声明参数/字段的类，因为它可能是其子类，可能会替换类型变量
 	 * Optionally set the concrete class that contains this dependency.
 	 * This may differ from the class that declares the parameter/field in that
 	 * it may be a subclass thereof, potentially substituting type variables.
@@ -358,6 +364,9 @@ public class DependencyDescriptor extends InjectionPoint implements Serializable
 	}
 
 	/**
+	 * 初始化基础方法参数（如果有）的参数名称。
+	 * 此时，该方法实际上并没有尝试检索参数名称。它只允许在应用程序调用getDependencyName（）时进行发现（如果有的话）
+	 *
 	 * Initialize parameter name discovery for the underlying method parameter, if any.
 	 * <p>This method does not actually try to retrieve the parameter name at
 	 * this point; it just allows discovery to happen when the application calls
@@ -379,15 +388,19 @@ public class DependencyDescriptor extends InjectionPoint implements Serializable
 	}
 
 	/**
+	 * <p>确定包装的参数/字段的声明的（非通用）类型</p>
 	 * Determine the declared (non-generic) type of the wrapped parameter/field.
 	 * @return the declared type (never {@code null})
 	 */
 	public Class<?> getDependencyType() {
 		if (this.field != null) {
+			// 处理嵌套的类型  eg.   Optional<Object>
 			if (this.nestingLevel > 1) {
 				Type type = this.field.getGenericType();
 				for (int i = 2; i <= this.nestingLevel; i++) {
 					if (type instanceof ParameterizedType) {
+						// 返回一个Type对象数组，表示该类型的实际类型参数。
+						//请注意，如果此类型表示嵌套在参数化类型内的非参数化类型，返回的数组为空.
 						Type[] args = ((ParameterizedType) type).getActualTypeArguments();
 						type = args[args.length - 1];
 					}

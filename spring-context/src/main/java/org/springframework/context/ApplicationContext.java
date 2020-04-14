@@ -60,6 +60,7 @@ public interface ApplicationContext extends EnvironmentCapable, ListableBeanFact
 
 	/**
 	 * Return the unique id of this application context.
+	 * 返回此应用程序上下文的唯一ID
 	 * @return the unique id of the context, or {@code null} if none
 	 */
 	@Nullable

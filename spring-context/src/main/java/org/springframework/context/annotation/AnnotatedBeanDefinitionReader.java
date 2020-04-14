@@ -234,6 +234,7 @@ public class AnnotatedBeanDefinitionReader {
 	}
 
 	/**
+	 *  LB-TODO 基于注解的方式，把对应的类注册成BeanDefinition 并缓存起来
 	 * Register a bean from the given bean class, deriving its metadata from
 	 * class-declared annotations.
 	 * @param beanClass the class of the bean
@@ -250,16 +251,21 @@ public class AnnotatedBeanDefinitionReader {
 			@Nullable Class<? extends Annotation>[] qualifiers, @Nullable Supplier<T> supplier,
 			@Nullable BeanDefinitionCustomizer[] customizers) {
 
+		// 用AnnotatedGenericBeanDefinition 包装class注解信息成bean的定义
 		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(beanClass);
 		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
 			return;
 		}
 
 		abd.setInstanceSupplier(supplier);
+		// 解析注解Bean定义类中的作用域元信息   获取注解中Scope的值,并设置代理模式
 		ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(abd);
 		abd.setScope(scopeMetadata.getScopeName());
+		// LB-TODO 如果没有自定义bean的名称，则通过BeanNameGenerator（AnnotationBeanNameGenerator）自动生成对应的名称
+		// 从注释中获取，否则首字母小写（不一定，根据类名的规则决定）
 		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));
 
+		// 处理注解Bean定义中的通用注解,如@Lazy,@Primary,@DependsOn,@Role,@Description
 		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
 		if (qualifiers != null) {
 			for (Class<? extends Annotation> qualifier : qualifiers) {
@@ -279,9 +285,11 @@ public class AnnotatedBeanDefinitionReader {
 				customizer.customize(abd);
 			}
 		}
-
+		// 包装成BeanDefinitionHolder
 		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName);
+		// 根据配置的作用域，创建相应的代理对象.       无NO,Class-cglib,interface--java的代理
 		definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
+		// 注册
 		BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry);
 	}
 

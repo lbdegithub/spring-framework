@@ -117,10 +117,13 @@ public abstract class AnnotationUtils {
 
 
 	/**
+	 * <p><h2>
+	 *     确定给定的类是否适合携带指定的注释之一（在类型，方法或字段级别）
+	 * </h2></p>
 	 * Determine whether the given class is a candidate for carrying one of the specified
 	 * annotations (at type, method or field level).
-	 * @param clazz the class to introspect
-	 * @param annotationTypes the searchable annotation types
+	 * @param clazz the class to introspect 当前的类
+	 * @param annotationTypes the searchable annotation types 查找的注释
 	 * @return {@code false} if the class is known to have no such annotations at any level;
 	 * {@code true} otherwise. Callers will usually perform full method/field introspection
 	 * if {@code true} is being returned here.
@@ -174,9 +177,11 @@ public abstract class AnnotationUtils {
 	}
 
 	/**
+	 * <p>获取指定的注解</p>
 	 * Get a single {@link Annotation} of {@code annotationType} from the supplied
 	 * annotation: either the given annotation itself or a direct meta-annotation
 	 * thereof.
+	 *
 	 * <p>Note that this method supports only a single level of meta-annotations.
 	 * For support for arbitrary levels of meta-annotations, use one of the
 	 * {@code find*()} methods instead.

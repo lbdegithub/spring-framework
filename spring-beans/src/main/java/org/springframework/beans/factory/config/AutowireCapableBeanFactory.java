@@ -71,6 +71,7 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 	int AUTOWIRE_NO = 0;
 
 	/**
+	 * 属性注入
 	 * Constant that indicates autowiring bean properties by name
 	 * (applying to all bean property setters).
 	 * @see #createBean
@@ -80,6 +81,7 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 	int AUTOWIRE_BY_NAME = 1;
 
 	/**
+	 * 属性注入
 	 * Constant that indicates autowiring bean properties by type
 	 * (applying to all bean property setters).
 	 * @see #createBean
@@ -89,6 +91,8 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 	int AUTOWIRE_BY_TYPE = 2;
 
 	/**
+	 * 构造器注入
+	 * 指示自动装配可以满足的最贪婪的构造函数的常数（涉及解析适当的构造函数）
 	 * Constant that indicates autowiring the greediest constructor that
 	 * can be satisfied (involves resolving the appropriate constructor).
 	 * @see #createBean
@@ -380,7 +384,8 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 	Object resolveDependency(DependencyDescriptor descriptor, @Nullable String requestingBeanName) throws BeansException;
 
 	/**
-	 * Resolve the specified dependency against the beans defined in this factory.
+	 * 解决针对此工厂中定义的Bean的指定依赖关系。
+	 * <p>Resolve the specified dependency against the beans defined in this factory.
 	 * @param descriptor the descriptor for the dependency (field/method/constructor)
 	 * @param requestingBeanName the name of the bean which declares the given dependency
 	 * @param autowiredBeanNames a Set that all names of autowired beans (used for

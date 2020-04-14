@@ -196,6 +196,8 @@ public class AnnotationConfigWebApplicationContext extends AbstractRefreshableWe
 	 */
 	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) {
+		//加载流程  扫面类注册BeanDefinition
+
 		AnnotatedBeanDefinitionReader reader = getAnnotatedBeanDefinitionReader(beanFactory);
 		ClassPathBeanDefinitionScanner scanner = getClassPathBeanDefinitionScanner(beanFactory);
 

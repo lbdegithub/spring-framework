@@ -77,6 +77,9 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 
 
 	/**
+	 * <p><h2/>
+	 * 设置bean的实例，注册默认编辑器
+	 * 为后面填充bean的属性准备
 	 * Create a new empty BeanWrapperImpl. Wrapped instance needs to be set afterwards.
 	 * Registers default editors.
 	 * @see #setWrappedInstance
@@ -96,6 +99,9 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 	}
 
 	/**
+	 * <p><h2/>
+	 * 	 设置bean的实例，注册默认编辑器
+	 * 	  为后面填充bean的属性准备
 	 * Create a new BeanWrapperImpl for the given object.
 	 * @param object object wrapped by this BeanWrapper
 	 */

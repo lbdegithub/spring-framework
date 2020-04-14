@@ -87,6 +87,7 @@ class BeanDefinitionValueResolver {
 
 
 	/**
+	 * LB-TODO --look
 	 * Given a PropertyValue, return a value, resolving any references to other
 	 * beans in the factory if necessary. The value could be:
 	 * <li>A BeanDefinition, which leads to the creation of a corresponding

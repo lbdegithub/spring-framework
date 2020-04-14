@@ -56,6 +56,12 @@ public interface ConfigurableListableBeanFactory
 	 * BeanFactoryAware or ApplicationContext through ApplicationContextAware.
 	 * <p>By default, only the BeanFactoryAware interface is ignored.
 	 * For further types to ignore, invoke this method for each type.
+	 *忽略给定的依赖接口进行自动装配。
+	* <p>通常由应用程序上下文用来注册
+	*以其他方式解决的依赖项，例如BeanFactory到
+	* BeanFactoryAware或ApplicationContext通过ApplicationContextAware。
+	* <p>默认情况下，仅BeanFactoryAware接口被忽略。
+	*要忽略其他类型，请为每种类型调用此方法。
 	 * @param ifc the dependency interface to ignore
 	 * @see org.springframework.beans.factory.BeanFactoryAware
 	 * @see org.springframework.context.ApplicationContextAware
@@ -77,6 +83,20 @@ public interface ConfigurableListableBeanFactory
 	 * @param autowiredValue the corresponding autowired value. This may also be an
 	 * implementation of the {@link org.springframework.beans.factory.ObjectFactory}
 	 * interface, which allows for lazy resolution of the actual target value.
+	 *使用相应的自动装配值注册特殊的依赖项类型。
+	* <p>这用于假定的工厂/上下文引用
+	*可自动执行，但在出厂时未定义为bean：
+	*例如ApplicationContext类型的依赖项解析为
+	* Bean所在的ApplicationContext实例。
+	* <p>注意：在普通BeanFactory中没有注册此类默认类型，
+	*甚至不针对BeanFactory接口本身。
+	* >>> dependencyType 要注册的依赖类型。这通常
+	*是BeanFactory之类的基础接口，并对其扩展进行了解析
+	*如果声明为自动装配依赖项（例如ListableBeanFactory），
+	*，只要给定值实际实现扩展接口即可。
+	*  >>> autowiredValue 对应的自动装配值。这也可能是
+	* {@link org.springframework.beans.factory.ObjectFactory}的实现
+	*接口，允许延迟解析实际目标值。
 	 */
 	void registerResolvableDependency(Class<?> dependencyType, @Nullable Object autowiredValue);
 
@@ -135,6 +155,8 @@ public interface ConfigurableListableBeanFactory
 	void clearMetadataCache();
 
 	/**
+	 * 冻结所有Bean定义，表明已注册的Bean定义将不再被修改或进一步处理。
+	 * 这允许工厂积极地缓存bean定义元数据
 	 * Freeze all bean definitions, signalling that the registered bean definitions
 	 * will not be modified or post-processed any further.
 	 * <p>This allows the factory to aggressively cache bean definition metadata.

@@ -17,6 +17,10 @@
 package org.springframework.core;
 
 /**
+ *
+ * 有序接口是可以由应该可排序的对象（例如在Collection中）实现的接口。
+ * 实际顺序可以解释为优先级排序，第一个对象（具有最低顺序值）具有最高优先级。
+ * 请注意，此接口还有一个优先级标记：PriorityOrdered
  * {@code Ordered} is an interface that can be implemented by objects that
  * should be <em>orderable</em>, for example in a {@code Collection}.
  *

@@ -41,6 +41,10 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 
 /**
+ * <p><h3>
+ *     封装了方法参数规范的Helper类，即方法或构造函数，以及已声明的泛型类型的参数索引和嵌套类型索引。用作传递的规范对象。
+ * 从4.2开始，提供了一个org.springframework.core.annotation.SynthesizingMethodParameter子类，该子类用于合成具有属性别名的注释。该子类尤其用于Web和消息终结点处理。
+ * </h3></p>
  * Helper class that encapsulates the specification of a method parameter, i.e. a {@link Method}
  * or {@link Constructor} plus a parameter index and a nested type index for a declared generic
  * type. Useful as a specification object to pass along.
@@ -543,6 +547,8 @@ public class MethodParameter {
 	}
 
 	/**
+	 *
+	 * 返回方法/构造函数参数的嵌套类型。
 	 * Return the nested type of the method/constructor parameter.
 	 * @return the parameter type (never {@code null})
 	 * @since 3.1
@@ -800,6 +806,10 @@ public class MethodParameter {
 	}
 
 	/**
+	 * <p>
+	 *     为给定的方法或构造函数创建一个新的MethodParameter。
+	 * 这是一种便利工厂方法，适用于以通用方式处理方法或构造方法引用的情况
+	 * </p>
 	 * Create a new MethodParameter for the given method or constructor.
 	 * <p>This is a convenience factory method for scenarios where a
 	 * Method or Constructor reference is treated in a generic fashion.

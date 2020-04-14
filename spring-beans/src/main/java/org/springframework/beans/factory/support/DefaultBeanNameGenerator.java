@@ -37,6 +37,9 @@ public class DefaultBeanNameGenerator implements BeanNameGenerator {
 
 	@Override
 	public String generateBeanName(BeanDefinition definition, BeanDefinitionRegistry registry) {
+		// LB-TODO 默认（非注解）的bean的名称生成器 如果是自身没有定义，会检查是否有父类和工厂类生成（父+$child；工厂+$created），
+		// 如果是内部类 加上 # + 本身的名子
+		//一般的bean都会 名称+ # + 序号  （增加计数器序号，直到ID唯一为止。 序号是为了保证beanName唯一）
 		return BeanDefinitionReaderUtils.generateBeanName(definition, registry);
 	}
 

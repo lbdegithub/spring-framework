@@ -61,9 +61,14 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 	String CONVERSION_SERVICE_BEAN_NAME = "conversionService";
 
 	/**
-	 * Name of the LoadTimeWeaver bean in the factory. If such a bean is supplied,
+	 *
+	 Name of the LoadTimeWeaver bean in the factory. If such a bean is supplied,
 	 * the context will use a temporary ClassLoader for type matching, in order
 	 * to allow the LoadTimeWeaver to process all actual bean classes.
+	 *
+	 * 工厂中Bean的名称是LoadTimeWeaver ，如果提供了这种bean，
+	*上下文将按顺序使用临时ClassLoader进行类型匹配
+	*允许LoadTimeWeaver处理所有实际的bean类。
 	 * @since 2.5
 	 * @see org.springframework.instrument.classloading.LoadTimeWeaver
 	 */
@@ -157,6 +162,9 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 	void addProtocolResolver(ProtocolResolver resolver);
 
 	/**
+	 * 加载或刷新配置的持久表示形式，可能是XML文件，属性文件或关系数据库模式。
+	 * 由于这是一种启动方法，因此，如果失败，则应销毁已创建的单例，
+	 * 以避免悬挂资源。换句话说，在调用该方法之后，应实例化所有单例或根本不实例化
 	 * Load or refresh the persistent representation of the configuration,
 	 * which might an XML file, properties file, or relational database schema.
 	 * <p>As this is a startup method, it should destroy already created singletons

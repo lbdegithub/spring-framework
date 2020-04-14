@@ -86,6 +86,7 @@ class ConstructorResolver {
 	/**
 	 * Marker for autowired arguments in a cached argument array, to be later replaced
 	 * by a {@linkplain #resolveAutowiredArgument resolved autowired argument}.
+	 * 缓存的参数数组中  自动装配的参数的标记，以后将由解析的自动装配的参数替换。
 	 */
 	private static final Object autowiredArgumentMarker = new Object();
 
@@ -109,7 +110,8 @@ class ConstructorResolver {
 
 
 	/**
-	 * "autowire constructor" (with constructor arguments by type) behavior.
+	 * 通过带参数的构造器实例化bean
+	 * <p>"autowire constructor" (with constructor arguments by type) behavior.
 	 * Also applied if explicit constructor argument values are specified,
 	 * matching all remaining arguments with beans from the bean factory.
 	 * <p>This corresponds to constructor injection: In this mode, a Spring
@@ -130,13 +132,16 @@ class ConstructorResolver {
 
 		Constructor<?> constructorToUse = null;
 		ArgumentsHolder argsHolderToUse = null;
+		// 参数
 		Object[] argsToUse = null;
 
 		if (explicitArgs != null) {
+			// 如果外部显示的传了参数
 			argsToUse = explicitArgs;
 		}
 		else {
 			Object[] argsToResolve = null;
+			// 从缓存中获取当前bean的构造参数
 			synchronized (mbd.constructorArgumentLock) {
 				constructorToUse = (Constructor<?>) mbd.resolvedConstructorOrFactoryMethod;
 				if (constructorToUse != null && mbd.constructorArgumentsResolved) {
@@ -148,12 +153,14 @@ class ConstructorResolver {
 				}
 			}
 			if (argsToResolve != null) {
+				// 构造解析（类型转化）
 				argsToUse = resolvePreparedArguments(beanName, mbd, bw, constructorToUse, argsToResolve, true);
 			}
 		}
 
 		if (constructorToUse == null || argsToUse == null) {
 			// Take specified constructors, if any.
+			// 如果有指定的构造器，则采用，否则反射获取
 			Constructor<?>[] candidates = chosenCtors;
 			if (candidates == null) {
 				Class<?> beanClass = mbd.getBeanClass();
@@ -168,6 +175,7 @@ class ConstructorResolver {
 				}
 			}
 
+			// 判断是否只有一个默认的无参数的构造器
 			if (candidates.length == 1 && explicitArgs == null && !mbd.hasConstructorArgumentValues()) {
 				Constructor<?> uniqueCandidate = candidates[0];
 				if (uniqueCandidate.getParameterCount() == 0) {
@@ -176,26 +184,33 @@ class ConstructorResolver {
 						mbd.constructorArgumentsResolved = true;
 						mbd.resolvedConstructorArguments = EMPTY_ARGS;
 					}
+					// 实例化
 					bw.setBeanInstance(instantiate(beanName, mbd, uniqueCandidate, EMPTY_ARGS));
 					return bw;
 				}
 			}
 
 			// Need to resolve the constructor.
+			// 构造器注入的情况（可能是指定的构造器 或者带参数的构造注入）
 			boolean autowiring = (chosenCtors != null ||
 					mbd.getResolvedAutowireMode() == AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR);
+			// 记录已经解析过的参数
 			ConstructorArgumentValues resolvedValues = null;
 
+			// 参数个数
 			int minNrOfArgs;
 			if (explicitArgs != null) {
+				// 外部传入的参数
 				minNrOfArgs = explicitArgs.length;
 			}
 			else {
+				// 此bean的构造函数参数值
 				ConstructorArgumentValues cargs = mbd.getConstructorArgumentValues();
 				resolvedValues = new ConstructorArgumentValues();
 				minNrOfArgs = resolveConstructorArguments(beanName, mbd, bw, cargs, resolvedValues);
 			}
 
+			// 方法排序。方法的修饰符，方法的个数 ；公共方法在前 并按参数个数降序，然后是非公共方法按参数降序
 			AutowireUtils.sortConstructors(candidates);
 			int minTypeDiffWeight = Integer.MAX_VALUE;
 			Set<Constructor<?>> ambiguousConstructors = null;
@@ -205,11 +220,13 @@ class ConstructorResolver {
 
 				int parameterCount = candidate.getParameterCount();
 
+				// 已经找到了渴望的构造方法
 				if (constructorToUse != null && argsToUse != null && argsToUse.length > parameterCount) {
 					// Already found greedy constructor that can be satisfied ->
 					// do not look any further, there are only less greedy constructors left.
 					break;
 				}
+				// ？？
 				if (parameterCount < minNrOfArgs) {
 					continue;
 				}
@@ -217,11 +234,14 @@ class ConstructorResolver {
 				ArgumentsHolder argsHolder;
 				Class<?>[] paramTypes = candidate.getParameterTypes();
 				if (resolvedValues != null) {
+					// 已经处理过部分参数
 					try {
+						// 用@ConstructorProperties注释的构造方法，并判断 和实际的参数数量是否对应
 						String[] paramNames = ConstructorPropertiesChecker.evaluate(candidate, parameterCount);
 						if (paramNames == null) {
 							ParameterNameDiscoverer pnd = this.beanFactory.getParameterNameDiscoverer();
 							if (pnd != null) {
+								// 参数的名称
 								paramNames = pnd.getParameterNames(candidate);
 							}
 						}
@@ -232,7 +252,7 @@ class ConstructorResolver {
 						if (logger.isTraceEnabled()) {
 							logger.trace("Ignoring constructor [" + candidate + "] of bean '" + beanName + "': " + ex);
 						}
-						// Swallow and try next constructor.
+						// Swallow and try next constructor.尝试下一个构造函数
 						if (causes == null) {
 							causes = new LinkedList<>();
 						}
@@ -242,6 +262,7 @@ class ConstructorResolver {
 				}
 				else {
 					// Explicit arguments given -> arguments length must match exactly.
+					// 参数长度必须完全匹配。
 					if (parameterCount != explicitArgs.length) {
 						continue;
 					}
@@ -296,10 +317,14 @@ class ConstructorResolver {
 		return bw;
 	}
 
+	/**
+	 * 反射 执行构造器的初始化
+	 */
 	private Object instantiate(
 			String beanName, RootBeanDefinition mbd, Constructor<?> constructorToUse, Object[] argsToUse) {
 
 		try {
+			// 获取工厂的中实例化策略
 			InstantiationStrategy strategy = this.beanFactory.getInstantiationStrategy();
 			if (System.getSecurityManager() != null) {
 				return AccessController.doPrivileged((PrivilegedAction<Object>) () ->
@@ -376,6 +401,7 @@ class ConstructorResolver {
 	}
 
 	/**
+	 * ？？
 	 * Instantiate the bean using a named factory method. The method may be static, if the
 	 * bean definition parameter specifies a class, rather than a "factory-bean", or
 	 * an instance variable on a factory object itself configured using Dependency Injection.
@@ -659,6 +685,10 @@ class ConstructorResolver {
 	}
 
 	/**
+	 * 将此bean的构造函数参数解析为构造器参数对象ConstructorArgumentValues。
+	 * 这可能涉及查找其他bean。
+	 * 此方法还用于处理静态工厂方法的调用
+	 *
 	 * Resolve the constructor arguments for this bean into the resolvedValues object.
 	 * This may involve looking up other beans.
 	 * <p>This method is also used for handling invocations of static factory methods.
@@ -673,20 +703,24 @@ class ConstructorResolver {
 
 		int minNrOfArgs = cargs.getArgumentCount();
 
+		// 便利当前bean的构造器的参数 ， 参数的位置索引和参数的映射
 		for (Map.Entry<Integer, ConstructorArgumentValues.ValueHolder> entry : cargs.getIndexedArgumentValues().entrySet()) {
 			int index = entry.getKey();
 			if (index < 0) {
 				throw new BeanCreationException(mbd.getResourceDescription(), beanName,
 						"Invalid constructor argument index: " + index);
 			}
+			// ？？ 可能是针对可变参数的情况 （...）
 			if (index > minNrOfArgs) {
 				minNrOfArgs = index + 1;
 			}
 			ConstructorArgumentValues.ValueHolder valueHolder = entry.getValue();
+			// 已转化过的参数 直接缓存起来（对应索引）
 			if (valueHolder.isConverted()) {
 				resolvedValues.addIndexedArgumentValue(index, valueHolder);
 			}
 			else {
+				// ？？
 				Object resolvedValue =
 						valueResolver.resolveValueIfNecessary("constructor argument", valueHolder.getValue());
 				ConstructorArgumentValues.ValueHolder resolvedValueHolder =
@@ -714,6 +748,8 @@ class ConstructorResolver {
 	}
 
 	/**
+	 *  --look
+	 * 给定已解析的构造函数参数值，创建一个参数数组以调用构造函数或工厂方法
 	 * Create an array of arguments to invoke a constructor or factory method,
 	 * given the resolved constructor argument values.
 	 */
@@ -813,22 +849,28 @@ class ConstructorResolver {
 	}
 
 	/**
-	 * Resolve the prepared arguments stored in the given bean definition.
+	 * LB-TODO 解析参数（普通方法或者构造方法）--look
+	 * <p> Resolve the prepared arguments stored in the given bean definition.
 	 */
 	private Object[] resolvePreparedArguments(String beanName, RootBeanDefinition mbd, BeanWrapper bw,
 			Executable executable, Object[] argsToResolve, boolean fallback) {
 
+		// 是否有自定义的类型转化处理
 		TypeConverter customConverter = this.beanFactory.getCustomTypeConverter();
 		TypeConverter converter = (customConverter != null ? customConverter : bw);
 		BeanDefinitionValueResolver valueResolver =
 				new BeanDefinitionValueResolver(this.beanFactory, beanName, mbd, converter);
+		// 获取所有的参数类型
 		Class<?>[] paramTypes = executable.getParameterTypes();
 
+		// 存放已经解析过的参数
 		Object[] resolvedArgs = new Object[argsToResolve.length];
 		for (int argIndex = 0; argIndex < argsToResolve.length; argIndex++) {
 			Object argValue = argsToResolve[argIndex];
+			// 构造方法参数的辅助类
 			MethodParameter methodParam = MethodParameter.forExecutable(executable, argIndex);
 			if (argValue == autowiredArgumentMarker) {
+				// autowired
 				argValue = resolveAutowiredArgument(methodParam, beanName, null, converter, fallback);
 			}
 			else if (argValue instanceof BeanMetadataElement) {
@@ -867,6 +909,7 @@ class ConstructorResolver {
 	}
 
 	/**
+	 * 用于解析应该自动装配的指定参数方法。
 	 * Template method for resolving the specified argument which is supposed to be autowired.
 	 */
 	@Nullable
@@ -920,6 +963,7 @@ class ConstructorResolver {
 
 	/**
 	 * Private inner class for holding argument combinations.
+	 * 保存参数组合
 	 */
 	private static class ArgumentsHolder {
 

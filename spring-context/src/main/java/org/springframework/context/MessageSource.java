@@ -31,7 +31,7 @@ import org.springframework.lang.Nullable;
  * <li>{@link org.springframework.context.support.ReloadableResourceBundleMessageSource}:
  * highly configurable, in particular with respect to reloading message definitions.
  * </ul>
- *
+ *  资源包的basenames属性 指定不同层次的资源
  * @author Rod Johnson
  * @author Juergen Hoeller
  * @see org.springframework.context.support.ResourceBundleMessageSource

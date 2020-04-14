@@ -100,6 +100,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	public static final int AUTOWIRE_AUTODETECT = AutowireCapableBeanFactory.AUTOWIRE_AUTODETECT;
 
 	/**
+	 * 根本没有依赖检查的常量
 	 * Constant that indicates no dependency check at all.
 	 * @see #setDependencyCheck
 	 */
@@ -430,6 +431,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	}
 
 	/**
+	 * 返回此定义是否指定bean类
 	 * Return whether this definition specifies a bean class.
 	 * @see #getBeanClass()
 	 * @see #setBeanClass(Class)
@@ -493,6 +495,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	}
 
 	/**
+	 * 是否是单例共享的，默认是单例的bean
 	 * Return whether this a <b>Singleton</b>, with a single shared instance
 	 * returned from all calls.
 	 * @see #SCOPE_SINGLETON
@@ -503,6 +506,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	}
 
 	/**
+	 * 原型类型， 每个调用返回一个独立的实例
 	 * Return whether this a <b>Prototype</b>, with an independent instance
 	 * returned for each call.
 	 * @see #SCOPE_PROTOTYPE
@@ -626,6 +630,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	/**
 	 * Return the dependency check code.
+	 * 返回依赖项检查代码。
 	 */
 	public int getDependencyCheck() {
 		return this.dependencyCheck;
@@ -749,6 +754,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	/**
 	 * Return a callback for creating an instance of the bean, if any.
+	 * 返回用于创建bean实例的回调
 	 * @since 5.0
 	 */
 	@Nullable
@@ -773,6 +779,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	/**
 	 * Return whether to allow access to non-public constructors and methods.
+	 * 返回是否允许访问非公共构造函数和方法
 	 */
 	public boolean isNonPublicAccessAllowed() {
 		return this.nonPublicAccessAllowed;
@@ -829,6 +836,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	/**
 	 * Return a factory method, if any.
+	 * 返回工厂方法
 	 */
 	@Override
 	@Nullable
@@ -844,6 +852,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	}
 
 	/**
+	 * 返回此bean的构造函数参数值
 	 * Return constructor argument values for this bean (never {@code null}).
 	 */
 	@Override
@@ -856,6 +865,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	/**
 	 * Return if there are constructor argument values defined for this bean.
+	 * 返回是否有为此bean定义的构造函数参数值。
 	 */
 	@Override
 	public boolean hasConstructorArgumentValues() {
@@ -907,6 +917,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	/**
 	 * Return if there are method overrides defined for this bean.
+	 * 返回是否为此bean定义了方法重写
 	 * @since 5.0.2
 	 */
 	public boolean hasMethodOverrides() {
@@ -924,6 +935,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	/**
 	 * Return the name of the initializer method.
+	 * 返回初始化方法的名称
 	 */
 	@Override
 	@Nullable
@@ -993,6 +1005,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	}
 
 	/**
+	 * 返回此bean定义是否是“合成的”，即不是由应用程序本身定义的
 	 * Return whether this bean definition is 'synthetic', that is,
 	 * not defined by the application itself.
 	 */
@@ -1109,12 +1122,14 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 */
 	public void prepareMethodOverrides() throws BeanDefinitionValidationException {
 		// Check that lookup methods exist and determine their overloaded status.
+		// 检查查找方法是否存在，并确定其重载状态。
 		if (hasMethodOverrides()) {
 			getMethodOverrides().getOverrides().forEach(this::prepareMethodOverride);
 		}
 	}
 
 	/**
+	 * <p>验证并准备给定的方法重写。检查是否存在具有指定名称的方法，如果找不到该方法，则将其标记为未重载。<p/>
 	 * Validate and prepare the given method override.
 	 * Checks for existence of a method with the specified name,
 	 * marking it as not overloaded if none found.

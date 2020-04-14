@@ -235,6 +235,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 
 	@Override
 	public Object getEarlyBeanReference(Object bean, String beanName) {
+		// LB-TODO
 		Object cacheKey = getCacheKey(bean.getClass(), beanName);
 		this.earlyProxyReferences.put(cacheKey, bean);
 		return wrapIfNecessary(bean, beanName, cacheKey);

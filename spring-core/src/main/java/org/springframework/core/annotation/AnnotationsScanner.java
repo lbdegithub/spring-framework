@@ -62,6 +62,7 @@ abstract class AnnotationsScanner {
 
 
 	/**
+	 * <p>扫描指定元素的层次结构以获取相关注释，并根据需要调用处理器</p>
 	 * Scan the hierarchy of the specified element for relevant annotations and
 	 * call the processor as required.
 	 * @param context an optional context object that will be passed back to the
@@ -102,7 +103,7 @@ abstract class AnnotationsScanner {
 	private static <C, R> R process(C context, AnnotatedElement source,
 			SearchStrategy searchStrategy, AnnotationsProcessor<C, R> processor,
 			@Nullable BiPredicate<C, Class<?>> classFilter) {
-
+        // LB-TODO  扫描指定元素的层次结构以获取相关注释  --look
 		if (source instanceof Class) {
 			return processClass(context, (Class<?>) source, searchStrategy, processor, classFilter);
 		}

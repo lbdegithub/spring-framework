@@ -31,7 +31,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
 
 /**
- * {@code BeanPostProcessor} that detects beans which implement the {@code ApplicationListener}
+ {@code BeanPostProcessor} that detects beans which implement the {@code ApplicationListener}
  * interface. This catches beans that can't reliably be detected by {@code getBeanNamesForType}
  * and related operations which only work against top-level beans.
  *
@@ -39,6 +39,10 @@ import org.springframework.util.ObjectUtils;
  * {@code DisposableBeanAdapter} to begin with. However, with alternative serialization
  * mechanisms, {@code DisposableBeanAdapter.writeReplace} might not get used at all, so we
  * defensively mark this post-processor's field state as {@code transient}.
+ *BeanPostProcessor，用于检测实现ApplicationListener接口的bean。
+ * 这将捕获getBeanNamesForType和仅对顶级bean有效的相关操作无法可靠检测到的bean。
+ * 使用标准Java序列化，此后处理器不会作为DisposableBeanAdapter的一部分进行序列化。
+ * 但是，在使用替代序列化机制的情况下，可能根本不会使用DisposableBeanAdapter.writeReplace，因此我们将此后处理器的字段状态标记为瞬态。
  *
  * @author Juergen Hoeller
  * @since 4.3.4
@@ -71,11 +75,14 @@ class ApplicationListenerDetector implements DestructionAwareBeanPostProcessor, 
 
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) {
+		// 初始化之后
 		if (bean instanceof ApplicationListener) {
 			// potentially not detected as a listener by getBeanNamesForType retrieval
 			Boolean flag = this.singletonNames.get(beanName);
+			// 是单例
 			if (Boolean.TRUE.equals(flag)) {
 				// singleton bean (top-level or inner): register on the fly
+				//注册监听
 				this.applicationContext.addApplicationListener((ApplicationListener<?>) bean);
 			}
 			else if (Boolean.FALSE.equals(flag)) {
@@ -94,6 +101,7 @@ class ApplicationListenerDetector implements DestructionAwareBeanPostProcessor, 
 
 	@Override
 	public void postProcessBeforeDestruction(Object bean, String beanName) {
+		// 销毁之前
 		if (bean instanceof ApplicationListener) {
 			try {
 				ApplicationEventMulticaster multicaster = this.applicationContext.getApplicationEventMulticaster();

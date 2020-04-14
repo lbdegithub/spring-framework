@@ -67,6 +67,15 @@ public interface SmartInstantiationAwareBeanPostProcessor extends InstantiationA
 	}
 
 	/**
+	 *
+	 * 获取一个引用，以便尽早访问指定的bean，通常是为了解决循环引用。
+	 * 此回调使后处理器有机会尽早公开包装器，也就是在目标Bean实例完全初始化之前。
+	 * 公开的对象应等效于postProcessBeforeInitialization / postProcessAfterInitialization公开的对象。
+	 * 注意，除非后处理器返回与所述后处理回调不同的包装，否则此方法返回的对象将用作Bean引用。
+	 * 换句话说：这些后处理回调可能最终会公开相同的引用，或者从这些后续回调中返回原始bean实例
+	 * （如果已经为该方法的调用构建了受影响的bean的包装，它将被公开。作为默认的最终bean参考）。
+	 * 默认实现按原样返回给定的bean
+	 *
 	 * Obtain a reference for early access to the specified bean,
 	 * typically for the purpose of resolving a circular reference.
 	 * <p>This callback gives post-processors a chance to expose a wrapper

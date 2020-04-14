@@ -75,6 +75,32 @@ import org.springframework.util.StringUtils;
 import org.springframework.util.StringValueResolver;
 
 /**
+ * <p>
+ *     org.springframework.beans.factory.config.BeanPostProcessor实现，支持开箱即用的常见Java注释，特别是javax.annotation包中的JSR-250注释。
+ *     这些常见的Java注释在许多Java EE 5技术（例如JSF 1.2）以及Java 6的JAX-WS中都受支持。<br/>
+ * 该后处理器通过继承具有预配置注释类型的InitDestroyAnnotationBeanPostProcessor来支持PostConstruct和PreDestroy注释（分别作为init注释和destroy注释）。<br/>
+ * 中心元素是用于注释驱动的命名Bean注入的Resource注释，默认情况下是从包含的Spring BeanFactory中进行的，<br/>
+ * 仅在JNDI中解析了namedName引用。 “ alwaysUseJndiLookup”标志针对名称引用和默认名称强制执行与标准Java EE 5资源注入等效的JNDI查找。<br/>
+ * 目标bean可以是简单的POJO，除了必须匹配的类型之外，没有其他特殊要求。<br/>
+ * 还支持JAX-WS WebServiceRef注释，类似于Resource，但具有创建特定JAX-WS服务端点的功能。<br/>
+ * 这可以按名称指向显式定义的资源，也可以对本地指定的JAX-WS服务类进行操作。最后，该后处理器还支持EJB 3 EJB注释，这也类似于Resource，<br/>
+ * 并具有为回退检索指定本地bean名称和全局JNDI名称的功能。在这种情况下，目标bean可以是普通的POJO，也可以是EJB 3 Session Bean。<br/>
+ * 此后处理器支持的通用注释在Java 6（JDK 1.6）和Java EE 5/6中都可用（Java EE 5/6也为其独立注释提供了独立的jar，允许在任何基于Java 5的应用程序中使用） 。<br/>
+ * 对于默认用法，将资源名称解析为Spring bean名称，只需在应用程序上下文中定义以下内容：
+ * <pre class="code">
+ *   &lt bean class =“ org.springframework.context.annotation.CommonAnnotationBeanPostProcessor” &gt;</pre>
+ * 对于直接JNDI访问，在Java EE应用程序的“ java：comp / env /”名称空间内将资源名称解析为JNDI资源引用，请使用以下命令：
+ * <pre class="code">
+ * &lt;bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"&gt;
+ *   &lt;property name="alwaysUseJndiLookup" value="true"/&gt;
+ * &lt;/bean&gt;</pre>
+ * MapdName引用将始终在JNDI中解析，并允许使用全局JNDI名称（包括“ java：”前缀）。<br/>
+ * “ alwaysUseJndiLookup”标志仅影响名称引用和默认名称（从字段名称/属性名称推断）。<br/>
+ * 注意：默认的CommonAnnotationBeanPostProcessor将通过“ context：annotation-config”<br/>
+ * 和“ context：component-scan” XML标签进行注册。如果要指定自定义CommonAnnotationBeanPostProcessor bean定义，请删除或关闭那里的默认注释配置！<br/>
+ * 注意：注解注入将在XML注入之前执行；因此，对于通过两种方法连接的属性，后一种配置将覆盖前一种配置<br/>
+ * </p>
+ *
  * {@link org.springframework.beans.factory.config.BeanPostProcessor} implementation
  * that supports common Java annotations out of the box, in particular the JSR-250
  * annotations in the {@code javax.annotation} package. These common Java
@@ -329,6 +355,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 
 	@Override
 	public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) {
+		// LB-TODO Resource 注入开始.......
 		InjectionMetadata metadata = findResourceMetadata(beanName, bean.getClass(), pvs);
 		try {
 			metadata.inject(bean, beanName, pvs);
@@ -491,6 +518,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 	}
 
 	/**
+	 * LB-TODO
 	 * Obtain the resource object for the given name and type.
 	 * @param element the descriptor for the annotated field/method
 	 * @param requestingBeanName the name of the requesting bean

@@ -166,6 +166,9 @@ public interface MergedAnnotations extends Iterable<MergedAnnotation<Annotation>
 	boolean isDirectlyPresent(String annotationType);
 
 	/**
+	 * <p>
+	 *     获取指定类型的最接近的匹配注释或元注释；如果不存在，则获取MergedAnnotation.missing（）
+	 * </p>
 	 * Get the {@linkplain MergedAnnotationSelectors#nearest() nearest} matching
 	 * annotation or meta-annotation of the specified type, or
 	 * {@link MergedAnnotation#missing()} if none is present.
@@ -278,6 +281,11 @@ public interface MergedAnnotations extends Iterable<MergedAnnotation<Annotation>
 
 
 	/**
+	 * <p>
+	 *     创建一个新的MergedAnnotations实例，其中包含指定元素中的所有注释和元注释。
+	 *     结果实例将不包含任何继承的注释。如果还希望包含这些内容，则应将from
+	 *     （AnnotatedElement，MergedAnnotations.SearchStrategy）与适当的MergedAnnotations.SearchStrategy一起使用
+	 * </p>
 	 * Create a new {@link MergedAnnotations} instance containing all
 	 * annotations and meta-annotations from the specified element. The
 	 * resulting instance will not include any inherited annotations. If you

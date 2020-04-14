@@ -31,6 +31,12 @@ package org.springframework.context;
  * implemented or if the @{@link org.springframework.core.annotation.Order Order}
  * annotation is present and to sort instances accordingly if so prior to invocation.
  *
+ * spring上下文初始化的回调函数在上下文（ConfigurableApplicationContext）刷新（refresh）之前调用。
+ *
+ * 通常被用作web应用，在一些程序设计在spring容器初始化使用。
+ * 比如说注册一些熟悉配置或者激活一些配置文件针对（ConfigurableApplicationContext的getEnvironment()方法）。
+ * 参考ContextLoader和FrameworkServlet支持定义一个"contextInitializerClasses"上下文参数或者初始化参数。
+ *
  * @author Chris Beams
  * @since 3.1
  * @param <C> the application context type

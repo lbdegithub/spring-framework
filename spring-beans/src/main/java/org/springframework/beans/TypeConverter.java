@@ -55,6 +55,9 @@ public interface TypeConverter {
 	<T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType) throws TypeMismatchException;
 
 	/**
+	 * 将值转换为所需的类型（如果需要，则从字符串）。
+	 * 从String到任何类型的转换通常将使用PropertyEditor类的setAsText方法或ConversionService中的Spring Converter。
+	 *
 	 * Convert the value to the required type (if necessary from a String).
 	 * <p>Conversions from String to any type will typically use the {@code setAsText}
 	 * method of the PropertyEditor class, or a Spring Converter in a ConversionService.

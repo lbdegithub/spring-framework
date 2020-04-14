@@ -112,6 +112,16 @@ public interface FactoryBean<T> {
 	Class<?> getObjectType();
 
 	/**
+	 *
+	 * 该工厂管理的对象是单例吗？也就是说，getObject（）总是返回相同的对象（可以缓存的引用）吗？
+	 * 注意：如果FactoryBean指示保留单例对象，则从其getObject（）返回的对象可能会被拥有的BeanFactory缓存。
+	 * 因此，除非FactoryBean始终公开相同的引用，否则不要返回true。
+	 * FactoryBean本身的单例状态通常由拥有的BeanFactory提供；通常，它必须在那里定义为单例。
+	 * 注意：此方法返回false不一定表示返回的对象是独立的实例。
+	 * 扩展SmartFactoryBean接口的实现可以通过其SmartFactoryBean.isPrototype（）方法显式指示独立的实例。
+	 * 如果isSingleton（）实现返回false，则简单假设未实现此扩展接口的Plain FactoryBean实现始终返回独立实例。
+	 * 默认实现返回true，因为FactoryBean通常管理一个单例实例。
+	 *
 	 * Is the object managed by this factory a singleton? That is,
 	 * will {@link #getObject()} always return the same object
 	 * (a reference that can be cached)?

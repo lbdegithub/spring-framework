@@ -73,8 +73,10 @@ public class InjectionMetadata {
 
 	private final Class<?> targetClass;
 
+	/** 需要注入的字段集合 */
 	private final Collection<InjectedElement> injectedElements;
 
+	/** 需要注入的字段几个 */
 	@Nullable
 	private volatile Set<InjectedElement> checkedElements;
 
@@ -118,15 +120,20 @@ public class InjectionMetadata {
 		this.checkedElements = checkedElements;
 	}
 
+	/**
+	 *   LB-TODO Autowired 注入
+	 */
 	public void inject(Object target, @Nullable String beanName, @Nullable PropertyValues pvs) throws Throwable {
 		Collection<InjectedElement> checkedElements = this.checkedElements;
 		Collection<InjectedElement> elementsToIterate =
 				(checkedElements != null ? checkedElements : this.injectedElements);
 		if (!elementsToIterate.isEmpty()) {
+			//遍历所有满足Autowired注解的字段
 			for (InjectedElement element : elementsToIterate) {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Processing injected element of bean '" + beanName + "': " + element);
 				}
+				// 根据字段注入和方法注入的情况 策略的调用对应的注入方法
 				element.inject(target, beanName, pvs);
 			}
 		}

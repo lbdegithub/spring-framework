@@ -51,6 +51,9 @@ import org.springframework.util.ClassUtils;
  */
 abstract class AutowireUtils {
 
+	/**
+	 * 方法排序。方法的修饰符，方法的个数  ；公共方法在前 并按参数个数降序，然后是非公共方法按参数降序
+	 */
 	public static final Comparator<Executable> EXECUTABLE_COMPARATOR = (e1, e2) -> {
 		int result = Boolean.compare(Modifier.isPublic(e2.getModifiers()), Modifier.isPublic(e1.getModifiers()));
 		return result != 0 ? result : Integer.compare(e2.getParameterCount(), e1.getParameterCount());
@@ -58,6 +61,8 @@ abstract class AutowireUtils {
 
 
 	/**
+	 * 对给定的构造函数进行排序，首选公共构造函数和带有最大数量参数的“贪婪”构造函数。结果将首先包含参数数量减少的公共构造函数，然后包含参数数量减少的非公共构造函数
+	 *
 	 * Sort the given constructors, preferring public constructors and "greedy" ones with
 	 * a maximum number of arguments. The result will contain public constructors first,
 	 * with decreasing number of arguments, then non-public constructors, again with

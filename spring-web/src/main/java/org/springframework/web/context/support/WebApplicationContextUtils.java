@@ -177,12 +177,14 @@ public abstract class WebApplicationContextUtils {
 	/**
 	 * Register web-specific scopes ("request", "session", "globalSession", "application")
 	 * with the given BeanFactory, as used by the WebApplicationContext.
+	 * <p><h2>对于web的上下文，设置具体的scope范围<h2/><p/>
 	 * @param beanFactory the BeanFactory to configure
 	 * @param sc the ServletContext that we're running within
 	 */
 	public static void registerWebApplicationScopes(ConfigurableListableBeanFactory beanFactory,
 			@Nullable ServletContext sc) {
 
+		//LB-TODO  注册不同的作用域
 		beanFactory.registerScope(WebApplicationContext.SCOPE_REQUEST, new RequestScope());
 		beanFactory.registerScope(WebApplicationContext.SCOPE_SESSION, new SessionScope());
 		if (sc != null) {

@@ -23,6 +23,9 @@ import org.springframework.beans.PropertyValues;
 import org.springframework.lang.Nullable;
 
 /**
+ * <p>BeanPostProcessor的子接口，它添加实例化之前的回调，以及在实例化之后但在设置显式属性或发生自动装配之前的回调。
+ * 通常用于抑制特定目标Bean的默认实例化，例如创建具有特殊TargetSource的代理（池目标，延迟初始化目标等），或实施其他注入策略，例如字段注入。
+ * 注意：此接口是专用接口，主要供框架内部使用。建议尽可能实现普通的BeanPostProcessor接口，或从InstantiationAwareBeanPostProcessorAdapter派生，以免对该接口进行扩展。</p>
  * Subinterface of {@link BeanPostProcessor} that adds a before-instantiation callback,
  * and a callback after instantiation but before explicit properties are set or
  * autowiring occurs.
@@ -76,6 +79,11 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 	}
 
 	/**
+	 * <p>
+	 *     通过构造函数或工厂方法在实例化bean之后但在发生Spring属性填充（通过显式属性或自动装配）之前执行操作。
+	 * 这是在Spring的自动装配开始之前对给定的bean实例执行自定义字段注入的理想回调。
+	 * 默认实现返回true
+	 * </p>
 	 * Perform operations after the bean has been instantiated, via a constructor or factory method,
 	 * but before Spring property population (from explicit properties or autowiring) occurs.
 	 * <p>This is the ideal callback for performing custom field injection on the given bean
