@@ -674,6 +674,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 				TypeConverter typeConverter = beanFactory.getTypeConverter();
 				try {
 					// LB-TODO 解析依赖  （实例化+初始化）获取依赖bean的实例
+					//LB-TODO @Autowired 和 @Resource 区别之处：前者是根据类型byType的方式获取依赖属性
 					value = beanFactory.resolveDependency(desc, beanName, autowiredBeanNames, typeConverter);
 				}
 				catch (BeansException ex) {

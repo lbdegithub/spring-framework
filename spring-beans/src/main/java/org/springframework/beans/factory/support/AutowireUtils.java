@@ -126,6 +126,7 @@ abstract class AutowireUtils {
 	}
 
 	/**
+	 * 根据给定的所需类型解析给定的实例的值，例如一个ObjectFactory 值到其实际对象结果<p>
 	 * Resolve the given autowiring value against the given required type,
 	 * e.g. an {@link ObjectFactory} value to its actual object result.
 	 * @param autowiringValue the value to resolve
