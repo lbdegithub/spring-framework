@@ -341,6 +341,7 @@ public class QualifierAnnotationAutowireCandidateResolver extends GenericTypeAwa
 	}
 
 	/**
+	 * 确定给定的依赖项是否声明了值注释（属性上或者方法的参数上）
 	 * Determine whether the given dependency declares a value annotation.
 	 * @see Value
 	 */

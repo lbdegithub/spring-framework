@@ -506,10 +506,13 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 
 			// 遍历所有的方法
 			ReflectionUtils.doWithLocalMethods(targetClass, method -> {
+				// 查找提供的桥方法的原始方法
 				Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
+				// 确定桥接方法和原生方法的签名是否一致 ？？获取的时候比较过 区别在于返回类型
 				if (!BridgeMethodResolver.isVisibilityBridgeMethodPair(method, bridgedMethod)) {
 					return;
 				}
+				// 获取Autowired注解
 				MergedAnnotation<?> ann = findAutowiredAnnotation(bridgedMethod);
 				if (ann != null && method.equals(ClassUtils.getMostSpecificMethod(method, clazz))) {
 					if (Modifier.isStatic(method.getModifiers())) {
@@ -518,6 +521,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 						}
 						return;
 					}
+					// 方法注入的方法必须带参
 					if (method.getParameterCount() == 0) {
 						if (logger.isInfoEnabled()) {
 							logger.info("Autowired annotation should only be used on methods with parameters: " +
@@ -615,6 +619,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 	}
 
 	/**
+	 * 解决指定的缓存方法参数或字段值
 	 * Resolve the specified cached method argument or field value.
 	 */
 	@Nullable
@@ -631,6 +636,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 
 
 	/**
+	 * 表示有关带《注释字段》的注入信息的类
 	 * Class representing injection information about an annotated field.
 	 */
 	private class AutowiredFieldElement extends InjectionMetadata.InjectedElement {
@@ -677,6 +683,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 					if (!this.cached) {
 						if (value != null || this.required) {
 							this.cachedFieldValue = desc;
+							// 注册依赖关系
 							registerDependentBeans(beanName, autowiredBeanNames);
 							if (autowiredBeanNames.size() == 1) {
 								String autowiredBeanName = autowiredBeanNames.iterator().next();
@@ -704,6 +711,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 
 
 	/**
+	 * 表示有关带《注释方法》的注入信息的类。
 	 * Class representing injection information about an annotated method.
 	 */
 	private class AutowiredMethodElement extends InjectionMetadata.InjectedElement {
@@ -725,6 +733,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 		 */
 		@Override
 		protected void inject(Object bean, @Nullable String beanName, @Nullable PropertyValues pvs) throws Throwable {
+			// 检查方法参数中有没有指定的 需要跳过的。 ？？ 就是pvs中已经显示的给定了属性值
 			if (checkPropertySkipping(pvs)) {
 				return;
 			}
@@ -741,6 +750,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 				Set<String> autowiredBeans = new LinkedHashSet<>(argumentCount);
 				Assert.state(beanFactory != null, "No BeanFactory available");
 				TypeConverter typeConverter = beanFactory.getTypeConverter();
+				// 遍历方法的参数 解析依赖
 				for (int i = 0; i < arguments.length; i++) {
 					MethodParameter methodParam = new MethodParameter(method, i);
 					DependencyDescriptor currDesc = new DependencyDescriptor(methodParam, this.required);
@@ -786,6 +796,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 			}
 			if (arguments != null) {
 				try {
+					//  反射注入
 					ReflectionUtils.makeAccessible(method);
 					method.invoke(bean, arguments);
 				}

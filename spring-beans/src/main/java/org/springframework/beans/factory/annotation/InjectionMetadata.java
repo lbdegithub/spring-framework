@@ -121,7 +121,11 @@ public class InjectionMetadata {
 	}
 
 	/**
-	 *   LB-TODO Autowired 注入
+	 * LB-TODO Autowired 注入
+	 * @param target 目标类 被注入的主体
+	 * @param beanName bean名称
+	 * @param pvs 参数--注释变成之后很少使用
+	 * @throws Throwable
 	 */
 	public void inject(Object target, @Nullable String beanName, @Nullable PropertyValues pvs) throws Throwable {
 		Collection<InjectedElement> checkedElements = this.checkedElements;

@@ -126,7 +126,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	/** Strategy for creating bean instances. 创建bean实例的策略*/
 	private InstantiationStrategy instantiationStrategy = new CglibSubclassingInstantiationStrategy();
 
-	/** Resolver strategy for method parameter names. */
+	/** Resolver strategy for method parameter names. 方法参数名称的解析器策略*/
 	@Nullable
 	private ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
@@ -560,7 +560,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * factory method, and autowiring a constructor.
 	 * @param beanName the name of the bean
 	 * @param mbd the merged bean definition for the bean
-	 * @param args explicit arguments to use for constructor or factory method invocation
+	 * @param args explicit arguments to use for constructor or factory method invocation 用于构造函数或工厂方法调用的显式参数
 	 * @return a new instance of the bean
 	 * @throws BeanCreationException if the bean could not be created
 	 * @see #instantiateBean
@@ -592,7 +592,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			// 标记处理器是否已经处理过了
 			if (!mbd.postProcessed) {
 				try {
-					// LB-TODO 此处其中一个后置处理器 会《解析当前bean依赖的字段》
+					// LB-TODO 此处其中一个后置处理器 会《解析 当前bean依赖的字段》
 					//   AutowiredAnnotationBeanPostProcessor.postProcessMergedBeanDefinition ----@AutoWired @Value @Inject
 					//   CommonAnnotationBeanPostProcessor.postProcessMergedBeanDefinition ----@Resource
 					applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);

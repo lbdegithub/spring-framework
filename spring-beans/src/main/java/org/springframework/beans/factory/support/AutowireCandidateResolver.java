@@ -21,6 +21,7 @@ import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.lang.Nullable;
 
 /**
+ * 用于确定特定bean定义是否符合特定依赖项自动装配候选条件的策略接口
  * Strategy interface for determining whether a specific bean definition
  * qualifies as an autowire candidate for a specific dependency.
  *
@@ -85,6 +86,7 @@ public interface AutowireCandidateResolver {
 	}
 
 	/**
+	 * 实际依赖关系目标的延迟解析构建代理，默认实现返回null。
 	 * Build a proxy for lazy resolution of the actual dependency target,
 	 * if demanded by the injection point.
 	 * <p>The default implementation simply returns {@code null}.

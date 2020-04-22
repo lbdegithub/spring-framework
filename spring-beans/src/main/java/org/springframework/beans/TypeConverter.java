@@ -98,11 +98,14 @@ public interface TypeConverter {
 			throws TypeMismatchException;
 
 	/**
+	 *
+	 * 将值转换为所需的类型（如果需要，则从字符串）。
+	 * 从String到任何类型的转换通常将使用PropertyEditor类的setAsText方法或ConversionService中的Spring Converter
 	 * Convert the value to the required type (if necessary from a String).
 	 * <p>Conversions from String to any type will typically use the {@code setAsText}
 	 * method of the PropertyEditor class, or a Spring Converter in a ConversionService.
-	 * @param value the value to convert
-	 * @param requiredType the type we must convert to
+	 * @param value the value to convert 要转换的值
+	 * @param requiredType the type we must convert to 传化的类型
 	 * (or {@code null} if not known, for example in case of a collection element)
 	 * @param typeDescriptor the type descriptor to use (may be {@code null}))
 	 * @return the new value, possibly the result of type conversion

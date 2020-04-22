@@ -386,10 +386,10 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 	/**
 	 * 解决针对此工厂中定义的Bean的指定依赖关系。
 	 * <p>Resolve the specified dependency against the beans defined in this factory.
-	 * @param descriptor the descriptor for the dependency (field/method/constructor)
-	 * @param requestingBeanName the name of the bean which declares the given dependency
+	 * @param descriptor the descriptor for the dependency (field/method/constructor)依赖项的描述符（字段/方法/构造函数）
+	 * @param requestingBeanName the name of the bean which declares the given dependency 声明给定依赖项的bean的名称
 	 * @param autowiredBeanNames a Set that all names of autowired beans (used for
-	 * resolving the given dependency) are supposed to be added to
+	 * resolving the given dependency) are supposed to be added to 自动装配的bean的名称都应添加到集合中（用于解决给定的依赖关系）
 	 * @param typeConverter the TypeConverter to use for populating arrays and collections
 	 * @return the resolved object, or {@code null} if none found
 	 * @throws NoSuchBeanDefinitionException if no matching bean was found
