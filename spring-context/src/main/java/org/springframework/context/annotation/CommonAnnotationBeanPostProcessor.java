@@ -571,7 +571,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 
 		Object resource;
 		Set<String> autowiredBeanNames;
-		// //LB-TODO @Autowired 和 @Resource 区别之处：后者是根据名称byName的方式获取依赖属性
+		// //LB-TODO @Autowired 和 @Resource 区别之处：后者是根据名称byName的方式获取依赖属性  --name
 		String name = element.name;
 
 		if (factory instanceof AutowireCapableBeanFactory) {

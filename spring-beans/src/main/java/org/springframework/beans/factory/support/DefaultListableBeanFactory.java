@@ -1505,6 +1505,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	protected Map<String, Object> findAutowireCandidates(
 			@Nullable String beanName, Class<?> requiredType, DependencyDescriptor descriptor) {
 
+		// LB-TODO @Autowired 和 @Resource 区别之处：前者是根据类型byType的方式获取依赖属性  ------requiredType
 		// 获取指定类型的所有的bean的名称 包括父容器的
 		String[] candidateNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
 				this, requiredType, true, descriptor.isEager());
@@ -1571,10 +1572,12 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		}
 		else if (containsSingleton(candidateName) || (descriptor instanceof StreamDependencyDescriptor &&
 				((StreamDependencyDescriptor) descriptor).isOrdered())) {
+			// 如果当前的依赖的bean 存在单例的缓存中 直接中容器中获取实例
 			Object beanInstance = descriptor.resolveCandidate(candidateName, requiredType, this);
 			candidates.put(candidateName, (beanInstance instanceof NullBean ? null : beanInstance));
 		}
 		else {
+			// 返回依赖bean的名称和类型的映射
 			candidates.put(candidateName, getType(candidateName));
 		}
 	}
