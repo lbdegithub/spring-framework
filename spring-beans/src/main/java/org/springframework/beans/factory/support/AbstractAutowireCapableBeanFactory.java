@@ -610,6 +610,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// 缓存《单例》，以便能够解析《循环依赖》
 		// 即使被诸如BeanFactoryAware之类的生命周期接口触发时也是如此
 		// 把正在创建的单例bean缓存起来。正在创建的缓存--> 实例化之前加入，完成实例和初始化后移除
+
+		// earlySingletonExposure 用于表示是否”提前暴露“原始对象的引用，用于解决循环依赖。(参考https://cloud.tencent.com/developer/article/1497692)
+		// 对于单例Bean，该变量一般为 true   但你也可以通过属性allowCircularReferences = false来关闭循环引用
+		// isSingletonCurrentlyInCreation(beanName) 表示当前bean必须在创建中才行
 		boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences &&
 				isSingletonCurrentlyInCreation(beanName));
 		if (earlySingletonExposure) {
@@ -617,6 +621,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				logger.trace("Eagerly caching bean '" + beanName +
 						"' to allow for resolving potential circular references");
 			}
+			// 把当前的bean存储在3级缓存singletonFactories中 并从2级中earlySingletonObjects移除（如果存在）
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
 		}
 
@@ -638,15 +643,31 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 		}
 
+		// 如果你的bean允许被早期暴露出去 也就是说可以被循环引用  那这里就会进行检查
 		if (earlySingletonExposure) {
+			// 此时 一级缓存singletonObjects 二级缓存earlySingletonObjects 都没有当前的bean  并且不会从三级缓存中查找（allowEarlyReference=false）
+
+			// 此处非常巧妙的一点：：：因为上面各式各样的实例化、初始化的后置处理器都执行了，如果你在上面执行了这一句(参考https://cloud.tencent.com/developer/article/1497692)
+			//  ((ConfigurableListableBeanFactory)this.beanFactory).registerSingleton(beanName, bean);
+			// 那么此处得到的earlySingletonReference 的引用最终会是你手动放进去的Bean最终返回，完美的实现了"偷天换日" 特别适合中间件的设计
+			// 我们知道，执行完此doCreateBean后执行addSingleton()  其实就是把自己再添加一次  **再一次强调，完美实现偷天换日**
 			Object earlySingletonReference = getSingleton(beanName, false);
 			if (earlySingletonReference != null) {
+				// 此处的判断  用来比较最终的exposedObject和开始bean是否一致，主要是因为initializeBean会调用后置处理器，bean有可能会改变，比如代理等
 				if (exposedObject == bean) {
+					// 没有发生变化 直接返回
 					exposedObject = earlySingletonReference;
 				}
+				// 检测它是否有依赖的bean 有就需要继续校验
 				else if (!this.allowRawInjectionDespiteWrapping && hasDependentBean(beanName)) {
+					// 获取依赖的所有的bean
 					String[] dependentBeans = getDependentBeans(beanName);
 					Set<String> actualDependentBeans = new LinkedHashSet<>(dependentBeans.length);
+					// 一个个检查它所以Bean (参考https://cloud.tencent.com/developer/article/1497692)
+					// removeSingletonIfCreatedForTypeCheckOnly  在AbstractBeanFactory里面
+					// 简单的说，它如果判断到该dependentBean并没有在创建中的情况下,那就把它从所有缓存中移除~~~  并且返回true
+					// 否则（比如确实在创建中） 那就返回false 进入我们的if里面~  表示所谓的真正依赖
+					//（解释：就是真的需要依赖它先实例化，才能实例化自己的依赖）
 					for (String dependentBean : dependentBeans) {
 						if (!removeSingletonIfCreatedForTypeCheckOnly(dependentBean)) {
 							actualDependentBeans.add(dependentBean);

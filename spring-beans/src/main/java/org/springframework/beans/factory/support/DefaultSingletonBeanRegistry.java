@@ -70,22 +70,22 @@ import org.springframework.util.StringUtils;
  */
 public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry {
 
-	// LB-TODO  循环依赖三(四)级缓存之一
+	// LB-TODO  循环依赖三(四)级缓存之一1
 	/** Cache of singleton objects: bean name to bean instance. 单例对象的缓存：bean名称到bean实例*/
 	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
-	// LB-TODO  循环依赖三(四)级缓存之一
+	// LB-TODO  循环依赖三(四)级缓存之一3
 	/** Cache of singleton factories: bean name to ObjectFactory. 单例工厂的缓存：Bean名称为ObjectFactory。 */
 	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
-	// LB-TODO  循环依赖三(四)级缓存之一
+	// LB-TODO  循环依赖三(四)级缓存之一2
 	/** Cache of early singleton objects: bean name to bean instance. 早期的单例对象的高速缓存：Bean名称到Bean实例*/
 	private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
 
 	/** Set of registered singletons, containing the bean names in registration order. 已注册的单例集，按注册顺序包含Bean名称*/
 	private final Set<String> registeredSingletons = new LinkedHashSet<>(256);
 
-	// LB-TODO  循环依赖三(四)级缓存之一
+	// LB-TODO  循环依赖三(四)级缓存之一4
 	/** Names of beans that are currently in creation. 当前正在创建的bean的名称*/
 	private final Set<String> singletonsCurrentlyInCreation =
 			Collections.newSetFromMap(new ConcurrentHashMap<>(16));
