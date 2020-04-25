@@ -393,7 +393,9 @@ class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable {
 	}
 
 	/**
+	 * LB-TODO 是否需要销毁的后置处理判断
 	 * Check whether the given bean has destruction-aware post-processors applying to it.
+	 * 检查给定的bean是否具有适用于它的可感知破坏的后处理器。
 	 * @param bean the bean instance
 	 * @param postProcessors the post-processor candidates
 	 */

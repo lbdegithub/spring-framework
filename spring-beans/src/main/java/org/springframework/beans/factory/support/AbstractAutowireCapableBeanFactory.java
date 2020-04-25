@@ -663,16 +663,15 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					// 获取依赖的所有的bean
 					String[] dependentBeans = getDependentBeans(beanName);
 					Set<String> actualDependentBeans = new LinkedHashSet<>(dependentBeans.length);
-					// 一个个检查它所以Bean (参考https://cloud.tencent.com/developer/article/1497692)
-					// removeSingletonIfCreatedForTypeCheckOnly  在AbstractBeanFactory里面
-					// 简单的说，它如果判断到该dependentBean并没有在创建中的情况下,那就把它从所有缓存中移除~~~  并且返回true
-					// 否则（比如确实在创建中） 那就返回false 进入我们的if里面~  表示所谓的真正依赖
-					//（解释：就是真的需要依赖它先实例化，才能实例化自己的依赖）
+
 					for (String dependentBean : dependentBeans) {
 						if (!removeSingletonIfCreatedForTypeCheckOnly(dependentBean)) {
+							// 被依赖的bean 存在
 							actualDependentBeans.add(dependentBean);
 						}
 					}
+					// 当前的bean已注入其他 bean中， 在其原始版本中作为循环引用的一部分，但当前的bean最终被包装了，这意味着说其他bean不使用当前bean的最终版本
+					// 需要抛出异常
 					if (!actualDependentBeans.isEmpty()) {
 						throw new BeanCurrentlyInCreationException(beanName,
 								"Bean with name '" + beanName + "' has been injected into other beans [" +
