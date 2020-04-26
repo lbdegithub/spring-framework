@@ -133,10 +133,19 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 
 	private final Set<String> targetSourcedBeans = Collections.newSetFromMap(new ConcurrentHashMap<>(16));
 
+	/**
+	 * 缓存早期代理过的bean，防止重复代理
+	 */
 	private final Map<Object, Object> earlyProxyReferences = new ConcurrentHashMap<>(16);
 
+	/**
+	 * 被代理的类和最终代理类的类型的缓存映射
+	 */
 	private final Map<Object, Class<?>> proxyTypes = new ConcurrentHashMap<>(16);
 
+	/**
+	 * 缓存一个bean被代理的标记。true 已被代理；false：不需要代理
+	 */
 	private final Map<Object, Boolean> advisedBeans = new ConcurrentHashMap<>(256);
 
 
@@ -245,11 +254,15 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) {
 		Object cacheKey = getCacheKey(beanClass, beanName);
 
+		// LB-TODO 实例化之前针对代理的 前置处理
 		if (!StringUtils.hasLength(beanName) || !this.targetSourcedBeans.contains(beanName)) {
 			if (this.advisedBeans.containsKey(cacheKey)) {
 				return null;
 			}
+			// 如果当前bean是  代理基础类(Advisor，Advice等)或者子类的时候 就不需要代理 直接返回
+			// 如果是强制不代理的类 也直接返回
 			if (isInfrastructureClass(beanClass) || shouldSkip(beanClass, beanName)) {
+				// 缓存代理基础类和 强制不代理类（强制原始实例）
 				this.advisedBeans.put(cacheKey, Boolean.FALSE);
 				return null;
 			}
@@ -258,6 +271,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		// Create proxy here if we have a custom TargetSource.
 		// Suppresses unnecessary default instantiation of the target bean:
 		// The TargetSource will handle target instances in a custom fashion.
+		// 如果我们有自定义的TargetSource，请在此处创建代理。 抑制目标bean的不必要的默认实例化： TargetSource将以自定义方式处理目标实例
 		TargetSource targetSource = getCustomTargetSource(beanClass, beanName);
 		if (targetSource != null) {
 			if (StringUtils.hasLength(beanName)) {
@@ -295,8 +309,11 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	@Override
 	public Object postProcessAfterInitialization(@Nullable Object bean, String beanName) {
 		if (bean != null) {
+			// 标准化bean的名称
 			Object cacheKey = getCacheKey(bean.getClass(), beanName);
+			// 在处理依赖时   已经处理过代理逻辑（AbstractAutoProxyCreator.getEarlyBeanReference）
 			if (this.earlyProxyReferences.remove(cacheKey) != bean) {
+				// 开始代理之路
 				return wrapIfNecessary(bean, beanName, cacheKey);
 			}
 		}
@@ -317,15 +334,18 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	 */
 	protected Object getCacheKey(Class<?> beanClass, @Nullable String beanName) {
 		if (StringUtils.hasLength(beanName)) {
+			// 工厂bean 加上前缀 因为在doGetBean 的开始已经通过transformedBeanName做了移除&的操作
 			return (FactoryBean.class.isAssignableFrom(beanClass) ?
 					BeanFactory.FACTORY_BEAN_PREFIX + beanName : beanName);
 		}
 		else {
+			// 兜底
 			return beanClass;
 		}
 	}
 
 	/**
+	 * 辨别是否需要代理包装
 	 * Wrap the given bean if necessary, i.e. if it is eligible for being proxied.
 	 * @param bean the raw bean instance
 	 * @param beanName the name of the bean
@@ -334,17 +354,21 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	 */
 	protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
 		if (StringUtils.hasLength(beanName) && this.targetSourcedBeans.contains(beanName)) {
+			// 有自定义的TargetSource， 在之前已经处理过类代理逻辑
 			return bean;
 		}
 		if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
+			// 是代理的基础类 或者强制不代理的类  直接返回
 			return bean;
 		}
+		// 调用入口有多个 需要再次的判断 是否代理的基础类和强制不代理
 		if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
 			this.advisedBeans.put(cacheKey, Boolean.FALSE);
 			return bean;
 		}
 
 		// Create proxy if we have advice.
+		//获取当前bean对应的所有advice类--需要被织入的类
 		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
 		if (specificInterceptors != DO_NOT_PROXY) {
 			this.advisedBeans.put(cacheKey, Boolean.TRUE);
@@ -359,12 +383,15 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	}
 
 	/**
+	 * 返回给定的bean类是否表示不应代理的基础结构类。
+	 * 默认实现将Advices，Advisor和AopInfrastructureBeans视为基础结构类
+	 * <p>
 	 * Return whether the given bean class represents an infrastructure class
 	 * that should never be proxied.
 	 * <p>The default implementation considers Advices, Advisors and
 	 * AopInfrastructureBeans as infrastructure classes.
 	 * @param beanClass the class of the bean
-	 * @return whether the bean represents an infrastructure class
+	 * @return whether the bean represents an infrastructure class true-表示不用代理；false-需要代理
 	 * @see org.aopalliance.aop.Advice
 	 * @see org.springframework.aop.Advisor
 	 * @see org.springframework.aop.framework.AopInfrastructureBean
@@ -398,6 +425,9 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	}
 
 	/**
+	 * 为bean实例创建目标源。如果设置，则使用任何TargetSourceCreators。如果不应该使用自定义TargetSource，则返回null。
+	 * 此实现使用“ customTargetSourceCreator”属性。子类可以重写此方法以使用其他机制。
+	 * <p>
 	 * Create a target source for bean instances. Uses any TargetSourceCreators if set.
 	 * Returns {@code null} if no custom TargetSource should be used.
 	 * <p>This implementation uses the "customTargetSourceCreators" property.

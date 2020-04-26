@@ -112,6 +112,10 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 	int AUTOWIRE_AUTODETECT = 4;
 
 	/**
+	 * LB-TODO 强制不代理
+	 * 初始化现有的Bean实例时，“原始实例”约定的后缀：将附加到完全限定的Bean类名中，
+	 * 例如“ com.mypackage.MyClass.ORIGINAL”，以强制返回给定的实例，即没有代理等
+	 * <p>
 	 * Suffix for the "original instance" convention when initializing an existing
 	 * bean instance: to be appended to the fully-qualified bean class name,
 	 * e.g. "com.mypackage.MyClass.ORIGINAL", in order to enforce the given instance

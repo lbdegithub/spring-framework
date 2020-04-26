@@ -521,6 +521,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		try {
+			// LB-TODO 初始化的前置处理器
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
 			//see  InstantiationAwareBeanPostProcessor ？？
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
@@ -1019,6 +1020,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
 				if (bp instanceof SmartInstantiationAwareBeanPostProcessor) {
 					SmartInstantiationAwareBeanPostProcessor ibp = (SmartInstantiationAwareBeanPostProcessor) bp;
+					// 如果依赖的bean被标注类代理 AbstractAutoProxyCreator.getEarlyBeanReference 就会返回对应依赖的代理对象
 					exposedObject = ibp.getEarlyBeanReference(exposedObject, beanName);
 				}
 			}

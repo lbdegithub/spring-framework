@@ -20,7 +20,7 @@ import org.springframework.lang.Nullable;
 
 /**
  * <p>
- *     TargetSource用于获取AOP调用的当前“目标”，如果没有周围建议选择终止拦截器链本身，则将通过反射来调用它。
+ *     TargetSource用于获取AOP调用的当前“目标”，如果没有around advice 选择终止拦截器链本身，则将通过反射来调用它。
  * 如果TargetSource是“静态”的，它将始终返回相同的目标，从而允许在AOP框架中进行优化。动态目标源可以支持池化，热插拔等。
  * 应用程序开发人员通常不需要直接使用TargetSources：这是AOP框架接口
  * </p>
