@@ -372,6 +372,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
 		if (specificInterceptors != DO_NOT_PROXY) {
 			this.advisedBeans.put(cacheKey, Boolean.TRUE);
+			// 创建代理，把合适的advice类织入到代理类中
 			Object proxy = createProxy(
 					bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
 			this.proxyTypes.put(cacheKey, proxy.getClass());
@@ -482,9 +483,11 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 
 		if (!proxyFactory.isProxyTargetClass()) {
 			if (shouldProxyTargetClass(beanClass, beanName)) {
+				// cglib
 				proxyFactory.setProxyTargetClass(true);
 			}
 			else {
+				// jdk
 				evaluateProxyInterfaces(beanClass, proxyFactory);
 			}
 		}
@@ -503,6 +506,9 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	}
 
 	/**
+	 *
+	 * 确定是否应使用给定的bean替代其目标类而不是其接口。
+	 * 检查相应的bean定义的“ preserveTargetClass”属性
 	 * Determine whether the given bean should be proxied with its target class rather than its interfaces.
 	 * <p>Checks the {@link AutoProxyUtils#PRESERVE_TARGET_CLASS_ATTRIBUTE "preserveTargetClass" attribute}
 	 * of the corresponding bean definition.

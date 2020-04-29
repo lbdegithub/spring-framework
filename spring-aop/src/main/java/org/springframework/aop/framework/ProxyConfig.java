@@ -46,6 +46,10 @@ public class ProxyConfig implements Serializable {
 
 
 	/**
+	 * 设置是否直接代理目标类，而不是仅代理特定的接口。默认值为“ false”。
+	 * 将此设置为“ true”可强制代理TargetSource的公开目标类。
+	 *<h2> 如果该目标类是接口，则将为给定接口创建一个JDK代理。如果该目标类是任何其他类，则将为给定类创建CGLIB代理。</h2>
+	 * <p>
 	 * Set whether to proxy the target class directly, instead of just proxying
 	 * specific interfaces. Default is "false".
 	 * <p>Set this to "true" to force proxying for the TargetSource's exposed
@@ -62,6 +66,7 @@ public class ProxyConfig implements Serializable {
 	}
 
 	/**
+	 * 返回是否直接代理目标类以及任何接口
 	 * Return whether to proxy the target class directly as well as any interfaces.
 	 */
 	public boolean isProxyTargetClass() {

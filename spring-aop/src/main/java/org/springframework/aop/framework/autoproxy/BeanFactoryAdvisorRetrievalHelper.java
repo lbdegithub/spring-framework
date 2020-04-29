@@ -59,6 +59,8 @@ public class BeanFactoryAdvisorRetrievalHelper {
 
 
 	/**
+	 * 在当前bean工厂中查找所有合格的Advisor bean，忽略FactoryBeans并排除当前正在创建的bean。
+	 * <p>
 	 * Find all eligible Advisor beans in the current bean factory,
 	 * ignoring FactoryBeans and excluding beans that are currently in creation.
 	 * @return the list of {@link org.springframework.aop.Advisor} beans
@@ -70,6 +72,7 @@ public class BeanFactoryAdvisorRetrievalHelper {
 		if (advisorNames == null) {
 			// Do not initialize FactoryBeans here: We need to leave all regular beans
 			// uninitialized to let the auto-proxy creator apply to them!
+			// 获取所有的Advisor类型的bean的名称
 			advisorNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
 					this.beanFactory, Advisor.class, true, false);
 			this.cachedAdvisorBeanNames = advisorNames;
@@ -81,6 +84,7 @@ public class BeanFactoryAdvisorRetrievalHelper {
 		List<Advisor> advisors = new ArrayList<>();
 		for (String name : advisorNames) {
 			if (isEligibleBean(name)) {
+				// 是不是正在创建
 				if (this.beanFactory.isCurrentlyInCreation(name)) {
 					if (logger.isTraceEnabled()) {
 						logger.trace("Skipping currently created advisor '" + name + "'");
@@ -102,6 +106,7 @@ public class BeanFactoryAdvisorRetrievalHelper {
 								}
 								// Ignore: indicates a reference back to the bean we're trying to advise.
 								// We want to find advisors other than the currently created bean itself.
+								// 遇到正在创建的bean 直接忽略 并日志记录异常
 								continue;
 							}
 						}
@@ -114,6 +119,8 @@ public class BeanFactoryAdvisorRetrievalHelper {
 	}
 
 	/**
+	 * 确定给定的切面bean名称是否符合要求
+	 *  <p>
 	 * Determine whether the aspect bean with the given name is eligible.
 	 * <p>The default implementation always returns {@code true}.
 	 * @param beanName the name of the aspect bean

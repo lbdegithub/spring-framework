@@ -101,7 +101,7 @@ public abstract class AutoProxyUtils {
 		return beanFactory.getType(beanName);
 	}
 
-	/**
+	/**设置bean定义中的 AutoProxyUtils.originalTargetClass 属性
 	 * Expose the given target class for the specified bean, if possible.
 	 * @param beanFactory the containing ConfigurableListableBeanFactory
 	 * @param beanName the name of the bean
