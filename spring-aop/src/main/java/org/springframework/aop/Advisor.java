@@ -19,6 +19,8 @@ package org.springframework.aop;
 import org.aopalliance.aop.Advice;
 
 /**
+ * 顾问，Advisor是Pointcut和Advice的配置器，它'组合'Pointcut和Advice，是将Advice注入程序中Pointcut位置的代码
+ * <p>
  * Base interface holding AOP <b>advice</b> (action to take at a joinpoint)
  * and a filter determining the applicability of the advice (such as
  * a pointcut). <i>This interface is not for use by Spring users, but to

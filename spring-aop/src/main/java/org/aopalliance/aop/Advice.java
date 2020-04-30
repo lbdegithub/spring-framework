@@ -17,6 +17,8 @@
 package org.aopalliance.aop;
 
 /**
+ * 某个连接点所采用的处理逻辑，也就是向连接点注入的代码
+ * 通知 如前置  后置 环绕。
  * Tag interface for Advice. Implementations can be any type
  * of advice, such as Interceptors.
  *

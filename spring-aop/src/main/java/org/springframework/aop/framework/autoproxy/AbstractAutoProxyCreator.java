@@ -111,10 +111,11 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	/** Logger available to subclasses. */
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	/** Default is global AdvisorAdapterRegistry. */
+	/** LB-TODO 默认值为全局AdvisorAdapterRegistry。 注册默认的适配器。Default is global AdvisorAdapterRegistry. */
 	private AdvisorAdapterRegistry advisorAdapterRegistry = GlobalAdvisorAdapterRegistry.getInstance();
 
 	/**
+	 * 冻结代理
 	 * Indicates whether or not the proxy should be frozen. Overridden from super
 	 * to prevent the configuration from becoming frozen too early.
 	 */
@@ -462,10 +463,10 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 
 	/**
 	 * Create an AOP proxy for the given bean.
-	 * @param beanClass the class of the bean
-	 * @param beanName the name of the bean
+	 * @param beanClass the class of the bean 目标类的class
+	 * @param beanName the name of the bean 目前bean名称
 	 * @param specificInterceptors the set of interceptors that is
-	 * specific to this bean (may be empty, but not null)
+	 * specific to this bean (may be empty, but not null) 待织入的advisor
 	 * @param targetSource the TargetSource for the proxy,
 	 * already pre-configured to access the bean
 	 * @return the AOP proxy for the bean
@@ -492,9 +493,11 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 			}
 		}
 
+		// 把当前bean存在的拦截器(代码指定的)和默认的拦截 拼装一起 并统一包装成Advisor
 		Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
 		proxyFactory.addAdvisors(advisors);
 		proxyFactory.setTargetSource(targetSource);
+		// 预留扩展（好的设计原则）
 		customizeProxyFactory(proxyFactory);
 
 		proxyFactory.setFrozen(this.freezeProxy);
@@ -502,6 +505,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 			proxyFactory.setPreFiltered(true);
 		}
 
+		// 委派proxyFactory创建代理
 		return proxyFactory.getProxy(getProxyClassLoader());
 	}
 
@@ -546,12 +550,15 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	 */
 	protected Advisor[] buildAdvisors(@Nullable String beanName, @Nullable Object[] specificInterceptors) {
 		// Handle prototypes correctly...
+		// 获取默认的拦截器
 		Advisor[] commonInterceptors = resolveInterceptorNames();
 
 		List<Object> allInterceptors = new ArrayList<>();
+		// 当前bean中存在通知的配置，比如事务，自定义通知等
 		if (specificInterceptors != null) {
 			allInterceptors.addAll(Arrays.asList(specificInterceptors));
 			if (commonInterceptors.length > 0) {
+				// 处理默认拦截器和 bean方法存在的 之间的顺序
 				if (this.applyCommonInterceptorsFirst) {
 					allInterceptors.addAll(0, Arrays.asList(commonInterceptors));
 				}
@@ -569,12 +576,14 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 
 		Advisor[] advisors = new Advisor[allInterceptors.size()];
 		for (int i = 0; i < allInterceptors.size(); i++) {
+			// 统一包装成Advisor
 			advisors[i] = this.advisorAdapterRegistry.wrap(allInterceptors.get(i));
 		}
 		return advisors;
 	}
 
 	/**
+	 * 将指定的拦截器名称解析为Advisor对象。
 	 * Resolves the specified interceptor names to Advisor objects.
 	 * @see #setInterceptorNames
 	 */
@@ -582,10 +591,12 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		BeanFactory bf = this.beanFactory;
 		ConfigurableBeanFactory cbf = (bf instanceof ConfigurableBeanFactory ? (ConfigurableBeanFactory) bf : null);
 		List<Advisor> advisors = new ArrayList<>();
+		// 默认的拦截器
 		for (String beanName : this.interceptorNames) {
 			if (cbf == null || !cbf.isCurrentlyInCreation(beanName)) {
 				Assert.state(bf != null, "BeanFactory required for resolving interceptor names");
 				Object next = bf.getBean(beanName);
+				// 将拦截器包装成advisor
 				advisors.add(this.advisorAdapterRegistry.wrap(next));
 			}
 		}

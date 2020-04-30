@@ -17,6 +17,7 @@
 package org.springframework.aop;
 
 /**
+ * 切入点，它是程序中需要注入Advice 的位置的集合，指明Advice要在什么样的条件下才能被触发
  * Core Spring pointcut abstraction.
  *
  * <p>A pointcut is composed of a {@link ClassFilter} and a {@link MethodMatcher}.
