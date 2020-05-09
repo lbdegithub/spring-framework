@@ -65,6 +65,8 @@ public abstract class AopProxyUtils {
 	}
 
 	/**
+	 * 确定给定bean实例的最终目标类，不仅遍历顶级代理，而且遍历任何数量的嵌套代理-尽可能长而没有副作用，即仅针对单例目标。
+	 *
 	 * Determine the ultimate target class of the given bean instance, traversing
 	 * not only a top-level proxy but any number of nested proxies as well &mdash;
 	 * as long as possible without side effects, that is, just for singleton targets.

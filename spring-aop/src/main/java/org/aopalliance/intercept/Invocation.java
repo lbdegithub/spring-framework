@@ -27,6 +27,7 @@ package org.aopalliance.intercept;
 public interface Invocation extends Joinpoint {
 
 	/**
+	 * 获取参数作为数组对象。可以更改此数组中的元素值以更改参数
 	 * Get the arguments as an array object.
 	 * It is possible to change element values within this
 	 * array to change the arguments.

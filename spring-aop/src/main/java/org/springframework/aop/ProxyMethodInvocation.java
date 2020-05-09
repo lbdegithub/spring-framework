@@ -36,12 +36,14 @@ import org.springframework.lang.Nullable;
 public interface ProxyMethodInvocation extends MethodInvocation {
 
 	/**
+	 * 返回进行此方法调用的代理
 	 * Return the proxy that this method invocation was made through.
-	 * @return the original proxy object
+	 * @return the original proxy object 原始代理对象
 	 */
 	Object getProxy();
 
 	/**
+	 * 创建此对象的副本
 	 * Create a clone of this object. If cloning is done before {@code proceed()}
 	 * is invoked on this object, {@code proceed()} can be invoked once per clone
 	 * to invoke the joinpoint (and the rest of the advice chain) more than once.
@@ -62,6 +64,7 @@ public interface ProxyMethodInvocation extends MethodInvocation {
 	MethodInvocation invocableClone(Object... arguments);
 
 	/**
+	 * 设置要在后续调用中使用的参数
 	 * Set the arguments to be used on subsequent invocations in the any advice
 	 * in this chain.
 	 * @param arguments the argument array
@@ -78,6 +81,7 @@ public interface ProxyMethodInvocation extends MethodInvocation {
 	void setUserAttribute(String key, @Nullable Object value);
 
 	/**
+	 * 返回指定用户属性的值
 	 * Return the value of the specified user attribute.
 	 * @param key the name of the attribute
 	 * @return the value of the attribute, or {@code null} if not set
