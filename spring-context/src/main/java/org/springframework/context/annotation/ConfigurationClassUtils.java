@@ -74,6 +74,7 @@ abstract class ConfigurationClassUtils {
 
 
 	/**
+	 * 检查给定的bean定义是否适合配置类（或在配置/组件类中声明的嵌套组件类，也要自动注册），并进行相应标记
 	 * Check whether the given bean definition is a candidate for a configuration class
 	 * (or a nested component class declared within a configuration/component class,
 	 * to be auto-registered as well), and mark it accordingly.
@@ -89,6 +90,7 @@ abstract class ConfigurationClassUtils {
 			return false;
 		}
 
+		// 获取注释元信息
 		AnnotationMetadata metadata;
 		if (beanDef instanceof AnnotatedBeanDefinition &&
 				className.equals(((AnnotatedBeanDefinition) beanDef).getMetadata().getClassName())) {
@@ -123,9 +125,14 @@ abstract class ConfigurationClassUtils {
 
 		Map<String, Object> config = metadata.getAnnotationAttributes(Configuration.class.getName());
 		if (config != null && !Boolean.FALSE.equals(config.get("proxyBeanMethods"))) {
+			// Configuration 中的方法使用 cglib 全代理
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);
 		}
 		else if (config != null || isConfigurationCandidate(metadata)) {
+			// 确保是配置类，并采用LITE模式 就是一个普通的bean
+			// 以避免处理CGLIB子类。
+			//关闭bean方法拦截可以有效地单独处理@Bean方法，就像在非@Configuration类（也称为“ @Bean Lite模式”）上声明时一样。
+			// 因此，它在行为上等同于删除@Configuration构造型
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_LITE);
 		}
 		else {
@@ -142,6 +149,7 @@ abstract class ConfigurationClassUtils {
 	}
 
 	/**
+	 * 检查给定的元数据中是否有配置类候选对象，是否被
 	 * Check the given metadata for a configuration class candidate
 	 * (or nested component class declared within a configuration/component class).
 	 * @param metadata the metadata of the annotated class
@@ -156,6 +164,8 @@ abstract class ConfigurationClassUtils {
 
 		// Any of the typical annotations found?
 		for (String indicator : candidateIndicators) {
+			// 确定基础元素是否具有已定义的给定类型的注释或元注释
+			// 是否被ComponentScan或者import等
 			if (metadata.isAnnotated(indicator)) {
 				return true;
 			}
@@ -163,6 +173,7 @@ abstract class ConfigurationClassUtils {
 
 		// Finally, let's look for @Bean methods...
 		try {
+			// 是否被其他地方以@Bean的方式定义
 			return metadata.hasAnnotatedMethods(Bean.class.getName());
 		}
 		catch (Throwable ex) {

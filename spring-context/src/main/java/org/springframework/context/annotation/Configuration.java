@@ -440,6 +440,8 @@ public @interface Configuration {
 	String value() default "";
 
 	/**
+	 * 是否全代理。
+	 * 该子类具有一些限制，例如配置类及其方法不允许声明为final。
 	 * Specify whether {@code @Bean} methods should get proxied in order to enforce
 	 * bean lifecycle behavior, e.g. to return shared singleton bean instances even
 	 * in case of direct {@code @Bean} method calls in user code. This feature

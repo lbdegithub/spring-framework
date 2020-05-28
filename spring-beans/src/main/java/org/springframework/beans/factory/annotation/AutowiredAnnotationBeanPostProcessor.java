@@ -69,6 +69,9 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
+ * 处理Spring 的标准注解@Autowired 和 @Value的依赖注入的后置处理器，
+ * 同时也支持JSR-330规范中的@Inject注解。
+ * <p>
  * {@link org.springframework.beans.factory.config.BeanPostProcessor BeanPostProcessor}
  * implementation that autowires annotated fields, setter methods, and arbitrary
  * config methods. Such members to be injected are detected through annotations:

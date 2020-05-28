@@ -67,6 +67,7 @@ public interface AnnotatedTypeMetadata {
 	}
 
 	/**
+	 * 检索给定类型的注释的属性（如果有的话）（即，如果在基础元素上定义为直接注释或元注释），还应考虑对组合注释的属性覆盖
 	 * Retrieve the attributes of the annotation of the given type, if any (i.e. if
 	 * defined on the underlying element, as direct annotation or meta-annotation),
 	 * also taking attribute overrides on composed annotations into account.
@@ -82,6 +83,7 @@ public interface AnnotatedTypeMetadata {
 	}
 
 	/**
+	 * 检索给定类型的注释的属性（如果有的话）（即，如果在基础元素上定义为直接注释或元注释），还应考虑对组合注释的属性覆盖
 	 * Retrieve the attributes of the annotation of the given type, if any (i.e. if
 	 * defined on the underlying element, as direct annotation or meta-annotation),
 	 * also taking attribute overrides on composed annotations into account.

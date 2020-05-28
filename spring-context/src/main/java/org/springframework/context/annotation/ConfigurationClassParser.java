@@ -189,6 +189,7 @@ class ConfigurationClassParser {
 			}
 		}
 
+		//LB-TODO ？？
 		this.deferredImportSelectorHandler.process();
 	}
 
@@ -223,6 +224,7 @@ class ConfigurationClassParser {
 
 	protected void processConfigurationClass(ConfigurationClass configClass, Predicate<String> filter) throws IOException {
 		if (this.conditionEvaluator.shouldSkip(configClass.getMetadata(), ConfigurationPhase.PARSE_CONFIGURATION)) {
+			// 根据 @Conditional  批注确定是否应跳过一项。
 			return;
 		}
 
@@ -244,8 +246,10 @@ class ConfigurationClassParser {
 		}
 
 		// Recursively process the configuration class and its superclass hierarchy.
+		// 递归处理配置类及其超类层次结构
 		SourceClass sourceClass = asSourceClass(configClass, filter);
 		do {
+			// LB-TODO @Configuration的解析 并处理其他注解
 			sourceClass = doProcessConfigurationClass(configClass, sourceClass, filter);
 		}
 		while (sourceClass != null);
@@ -285,6 +289,7 @@ class ConfigurationClassParser {
 		}
 
 		// Process any @ComponentScan annotations
+		// LB-TODO @ComponentScan
 		Set<AnnotationAttributes> componentScans = AnnotationConfigUtils.attributesForRepeatable(
 				sourceClass.getMetadata(), ComponentScans.class, ComponentScan.class);
 		if (!componentScans.isEmpty() &&
@@ -307,6 +312,7 @@ class ConfigurationClassParser {
 		}
 
 		// Process any @Import annotations
+		//LB-TODO  @Import
 		processImports(configClass, sourceClass, getImports(sourceClass), filter, true);
 
 		// Process any @ImportResource annotations
@@ -323,6 +329,7 @@ class ConfigurationClassParser {
 
 		// Process individual @Bean methods
 		Set<MethodMetadata> beanMethods = retrieveBeanMethodMetadata(sourceClass);
+		// 标注@Configuration的内部@Bean方法
 		for (MethodMetadata methodMetadata : beanMethods) {
 			configClass.addBeanMethod(new BeanMethod(methodMetadata, configClass));
 		}

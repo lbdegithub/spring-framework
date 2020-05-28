@@ -138,6 +138,7 @@ class ConfigurationClassBeanDefinitionReader {
 		}
 
 		if (configClass.isImported()) {
+			// 如果@Configuration 本身@bean 注册自己 registry.registerBeanDefinition
 			registerBeanDefinitionForImportedConfigurationClass(configClass);
 		}
 		for (BeanMethod beanMethod : configClass.getBeanMethods()) {
@@ -171,6 +172,7 @@ class ConfigurationClassBeanDefinitionReader {
 	}
 
 	/**
+	 * LB-TODO 注册@Configuration内的@Bean
 	 * Read the given {@link BeanMethod}, registering bean definitions
 	 * with the BeanDefinitionRegistry based on its contents.
 	 */

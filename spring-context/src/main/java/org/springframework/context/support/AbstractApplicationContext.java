@@ -545,6 +545,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				// Invoke factory processors registered as beans in the context.
 				// 《实例化并调用》在上下文中注册为bean的工厂处理器《BeanFactoryPostProcessor》
 				// （按类别执行，实现了BeanFactoryPostProcessor的类）, LB-TODO 在单例bean实例化之前
+				// 此处也是处理@Configuration 的入口 see ConfigurationClassPostProcessor
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				//---------------------↑↑ BeanFactory ↑↑--------------------------
@@ -562,7 +563,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				initMessageSource();
 
 				// Initialize event multicaster for this context. 为此上下文初始化事件多播器
-				//  ------调用beanFactory.getBean----初始化内部属性 private MessageSource messageSource;
+				//  ------调用beanFactory.getBean----初始化内部属性 private ApplicationEventMulticaster applicationEventMulticaster;
 				// 广播事件（广播对象 ApplicationListener ,事件 ApplicationEvent ）--观察者设计模式
 				// https://docs.spring.io/spring/docs/5.2.5.RELEASE/spring-framework-reference/core.html#context-functionality-events
 				initApplicationEventMulticaster();
@@ -579,7 +580,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				//LB-TODO  实例化《所有的单例bean》（懒加载的除外），单例bean是有容器初始化的
 				finishBeanFactoryInitialization(beanFactory);
 
-				// Last step: publish corresponding event.
+				// Last step: publish corresponding event.发布相应的事件
 				finishRefresh();
 			}
 
