@@ -197,6 +197,7 @@ public class DefaultUriBuilderFactory implements UriBuilderFactory {
 
 	@Override
 	public URI expand(String uriTemplate, Map<String, ?> uriVars) {
+		// 默认uri组装策略
 		return uriString(uriTemplate).build(uriVars);
 	}
 

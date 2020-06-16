@@ -135,6 +135,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	 * Default {@link HttpMessageConverter HttpMessageConverters} are initialized.
 	 */
 	public RestTemplate() {
+		// 初始化实体转化器
 		this.messageConverters.add(new ByteArrayHttpMessageConverter());
 		this.messageConverters.add(new StringHttpMessageConverter());
 		this.messageConverters.add(new ResourceHttpMessageConverter(false));
@@ -175,6 +176,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 			this.messageConverters.add(new MappingJackson2CborHttpMessageConverter());
 		}
 
+		// uri构造工厂
 		this.uriTemplateHandler = initUriTemplateHandler();
 	}
 
@@ -453,7 +455,9 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	public <T> ResponseEntity<T> postForEntity(String url, @Nullable Object request,
 			Class<T> responseType, Map<String, ?> uriVariables) throws RestClientException {
 
+		// Request回调 扩展用
 		RequestCallback requestCallback = httpEntityCallback(request, responseType);
+		// Response提取器  响应结果转化成对应的对象
 		ResponseExtractor<ResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
 		return nonNull(execute(url, HttpMethod.POST, requestCallback, responseExtractor, uriVariables));
 	}
@@ -691,6 +695,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 			@Nullable ResponseExtractor<T> responseExtractor, Map<String, ?> uriVariables)
 			throws RestClientException {
 
+		// 合成请求地址内容
 		URI expanded = getUriTemplateHandler().expand(url, uriVariables);
 		return doExecute(expanded, method, requestCallback, responseExtractor);
 	}
@@ -734,8 +739,10 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 		try {
 			ClientHttpRequest request = createRequest(url, method);
 			if (requestCallback != null) {
+				// 扩展
 				requestCallback.doWithRequest(request);
 			}
+			// 执行请求
 			response = request.execute();
 			handleResponse(url, method, response);
 			return (responseExtractor != null ? responseExtractor.extractData(response) : null);

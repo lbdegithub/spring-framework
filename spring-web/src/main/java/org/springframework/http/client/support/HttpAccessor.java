@@ -122,6 +122,7 @@ public abstract class HttpAccessor {
 	 */
 	protected ClientHttpRequest createRequest(URI url, HttpMethod method) throws IOException {
 		ClientHttpRequest request = getRequestFactory().createRequest(url, method);
+		// 扩展 可以定义请求格式，数据
 		initialize(request);
 		if (logger.isDebugEnabled()) {
 			logger.debug("HTTP " + method.name() + " " + url);
