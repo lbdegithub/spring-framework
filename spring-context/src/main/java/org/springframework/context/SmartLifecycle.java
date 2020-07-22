@@ -63,6 +63,7 @@ package org.springframework.context;
  * @since 3.0
  * @see LifecycleProcessor
  * @see ConfigurableApplicationContext
+ * LB-TODO  spring cloud erueka服务端启动就是利用这个原理
  */
 public interface SmartLifecycle extends Lifecycle, Phased {
 

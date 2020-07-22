@@ -128,6 +128,7 @@ public final class SpringFactoriesLoader {
 			return result;
 		}
 
+		// LB-TODO spring.factories文件的解析
 		try {
 			Enumeration<URL> urls = (classLoader != null ?
 					classLoader.getResources(FACTORIES_RESOURCE_LOCATION) :

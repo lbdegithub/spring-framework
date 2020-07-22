@@ -948,6 +948,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		clearResourceCaches();
 
 		// Initialize lifecycle processor for this context.
+		// 会处理Spring cloud eureka 客户端的注册功能
 		initLifecycleProcessor();
 
 		// Propagate refresh to lifecycle processor first.
